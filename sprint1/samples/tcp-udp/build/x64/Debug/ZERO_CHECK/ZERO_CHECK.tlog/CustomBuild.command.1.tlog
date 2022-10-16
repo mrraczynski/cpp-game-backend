@@ -1,0 +1,10 @@
+^E:\PROJECTS\GITHUB\CPP-GAME-BACKEND\SPRINT1\SAMPLES\TCP-UDP\BUILD\CMAKEFILES\DD4BADDC75718DC77E0D1D16D8EC5FB1\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SE:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp -BE:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build/TCP_UDP_Practice.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

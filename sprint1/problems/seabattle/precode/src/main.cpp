@@ -68,7 +68,43 @@ public:
     }
 
     void StartGame(tcp::socket& socket, bool my_initiative) {
-        // TODO: реализуйте самостоятельно
+        net::streambuf stream_buf;
+        size_t size;
+        std::string my_data, download_info;
+        boost::system::error_code ec;
+        PrintFieldPair(this->my_field_, this->other_field_);
+        while (true)
+        {
+            if (my_initiative)
+            {
+                std::optional<std::pair<int, int>> move = SendMove(socket);
+                SeabattleField::ShotResult res = ReadResult(socket, move);
+                switch (res)
+                {
+                case SeabattleField::ShotResult::MISS:
+                    std::cout << "Miss!"sv << std::endl;
+                    my_initiative = false;
+                    break;
+                case SeabattleField::ShotResult::HIT:
+                    std::cout << "Hit!"sv << std::endl;
+                    break;
+                case SeabattleField::ShotResult::KILL:
+                    std::cout << "Kill!"sv << std::endl;
+                    break;
+                }                
+                PrintFieldPair(this->my_field_, this->other_field_);
+            }
+            else
+            {
+                std::optional<std::pair<int, int>> move = ReadMove(socket);
+                SeabattleField::ShotResult res = SendResult(socket, move);
+                if (res == SeabattleField::ShotResult::MISS)
+                {
+                    my_initiative = true;
+                }                
+                PrintFieldPair(this->my_field_, this->other_field_);
+            }            
+        }
     }
 
 private:
@@ -96,7 +132,63 @@ private:
         return my_field_.IsLoser() || other_field_.IsLoser();
     }
 
-    // TODO: добавьте методы по вашему желанию
+    std::optional <std::pair<int, int>> SendMove(tcp::socket& socket)
+    {        
+        std::string str_move;
+        std::cout << "Your turn: "sv;
+        std::cin >> str_move;
+        socket.write_some(net::buffer(str_move));
+        return ParseMove(str_move);
+    }
+    SeabattleField::ShotResult SendResult(tcp::socket& socket, std::optional <std::pair<int, int>> move)
+    {
+        SeabattleField::ShotResult res = my_field_.Shoot(move.value().second, move.value().first);
+        socket.write_some(net::buffer(std::to_string(static_cast<int> (res))));
+        return res;
+    }
+    std::optional <std::pair<int, int>> ReadMove(tcp::socket& socket)
+    {
+        std::cout << "Waiting for turn..."sv << std::endl;
+        boost::system::error_code ec;
+        net::streambuf stream_buf(2);
+        net::read(socket, stream_buf, ec);
+        std::string str_move{ std::istreambuf_iterator<char>(&stream_buf),
+                            std::istreambuf_iterator<char>() };
+        if (ec) {
+            std::cout << "Error reading data"sv << std::endl;
+            std::cout << ec.message() << std::endl;
+        }
+        std::cout << "Shot to "sv << str_move << std::endl;
+        return ParseMove(str_move);
+    }
+    SeabattleField::ShotResult ReadResult(tcp::socket& socket, std::optional <std::pair<int, int>> move)
+    {
+        boost::system::error_code ec;
+        net::streambuf stream_buf(1);
+        net::read(socket, stream_buf, ec);
+        std::string str_res{ std::istreambuf_iterator<char>(&stream_buf),
+                            std::istreambuf_iterator<char>() };
+        if (ec) {
+            std::cout << "Error reading data"sv << std::endl;
+            std::cout << ec.message() << std::endl;
+        }
+        int res = std::stoi(str_res);
+        switch (res)
+        {
+        case 0:
+            other_field_.MarkMiss(move.value().second, move.value().first);
+            return SeabattleField::ShotResult::MISS;
+            break;
+        case 1:
+            other_field_.MarkHit(move.value().second, move.value().first);
+            return SeabattleField::ShotResult::HIT;
+            break;
+        case 2:
+            other_field_.MarkKill(move.value().second, move.value().first);
+            return SeabattleField::ShotResult::KILL;
+            break;
+        }
+    }
 
 private:
     SeabattleField my_field_;
@@ -105,8 +197,19 @@ private:
 
 void StartServer(const SeabattleField& field, unsigned short port) {
     SeabattleAgent agent(field);
+    net::io_context io_context;
 
-    // TODO: реализуйте самостоятельно
+    tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), port));
+    std::cout << "Waiting for connection..."sv << std::endl;
+
+    boost::system::error_code ec;
+    tcp::socket socket{ io_context };
+    acceptor.accept(socket, ec);
+
+    if (ec) {
+        std::cout << "Can't accept connection"sv << std::endl;
+        return;
+    }
 
     agent.StartGame(socket, false);
 };
@@ -114,23 +217,53 @@ void StartServer(const SeabattleField& field, unsigned short port) {
 void StartClient(const SeabattleField& field, const std::string& ip_str, unsigned short port) {
     SeabattleAgent agent(field);
 
-    // TODO: реализуйте самостоятельно
+    boost::system::error_code ec;
+    auto endpoint = tcp::endpoint(net::ip::make_address(ip_str, ec), port);
+
+    if (ec) {
+        std::cout << "Wrong IP format"sv << std::endl;
+        return;
+    }
+
+    net::io_context io_context;
+    tcp::socket socket{ io_context };
+    socket.connect(endpoint, ec);
+
+    if (ec) {
+        std::cout << "Can't connect to server"sv << std::endl;
+        return;
+    }
 
     agent.StartGame(socket, true);
 };
+
+/*int main(int argc, const char** argv) {
+    std::string i = "1111";
+    std::mt19937 engine(std::stoi(i));
+    SeabattleField fieldL = SeabattleField::GetRandomField(engine);
+
+    //StartServer(fieldL, 3333);
+    StartClient(fieldL, std::string("127.0.0.1"sv), 3333);
+
+    if (argc == 3) {
+        StartServer(fieldL, std::stoi(argv[2]));
+    } else if (argc == 4) {
+        StartClient(fieldL, argv[2], std::stoi(argv[3]));
+    }
+}*/
 
 int main(int argc, const char** argv) {
     if (argc != 3 && argc != 4) {
         std::cout << "Usage: program <seed> [<ip>] <port>" << std::endl;
         return 1;
     }
-
     std::mt19937 engine(std::stoi(argv[1]));
     SeabattleField fieldL = SeabattleField::GetRandomField(engine);
 
     if (argc == 3) {
         StartServer(fieldL, std::stoi(argv[2]));
-    } else if (argc == 4) {
+    }
+    else if (argc == 4) {
         StartClient(fieldL, argv[2], std::stoi(argv[3]));
     }
 }

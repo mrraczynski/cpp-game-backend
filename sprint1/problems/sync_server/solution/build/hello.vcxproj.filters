@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\sync_server\solution\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\sync_server\solution\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{12F29411-AF5A-3FF6-8248-CE5E667485E1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

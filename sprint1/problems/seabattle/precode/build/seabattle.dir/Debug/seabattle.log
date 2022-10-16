@@ -1,0 +1,4 @@
+﻿  main.cpp
+E:\Projects\GitHub\cpp-game-backend\sprint1\problems\seabattle\precode\src\main.cpp(72,16): warning C4101: size: неиспользованная локальная переменная
+E:\Projects\GitHub\cpp-game-backend\sprint1\problems\seabattle\precode\src\main.cpp(191): warning C4715: SeabattleAgent::ReadResult: значение возвращается не при всех путях выполнения
+  seabattle.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint1\problems\seabattle\precode\build\bin\seabattle.exe

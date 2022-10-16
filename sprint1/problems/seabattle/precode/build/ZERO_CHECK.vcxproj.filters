@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\seabattle\precode\build\CMakeFiles\d8a1533deab712dda66f5c8429319d4c\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{1A36F8F0-9989-3998-B6DE-D57BEF24BBEA}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

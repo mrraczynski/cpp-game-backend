@@ -1,0 +1,10 @@
+^E:\PROJECTS\GITHUB\CPP-GAME-BACKEND\SPRINT1\PROBLEMS\SEABATTLE\PRECODE\BUILD\CMAKEFILES\D8A1533DEAB712DDA66F5C8429319D4C\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SE:/Projects/GitHub/cpp-game-backend/sprint1/problems/seabattle/precode -BE:/Projects/GitHub/cpp-game-backend/sprint1/problems/seabattle/precode/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/Projects/GitHub/cpp-game-backend/sprint1/problems/seabattle/precode/build/Seabattle.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

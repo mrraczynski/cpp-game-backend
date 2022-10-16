@@ -3,8 +3,6 @@ name: autotests
 on:
   pull_request:
   push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
@@ -138,6 +136,29 @@ jobs:
 
       - name: run tests sprint2 logger
         run: ./sprint2/problems/logger/solution/build/bin/hello_log
+
+      - name: build tests sprint2 server_logging
+        run: |
+          cd sprint2/problems/server_logging/solution
+          docker build -t my_http_server .
+          echo "COMMAND_RUN=docker run --rm --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 my_http_server" >> $GITHUB_ENV
+
+      - name: run tests sprint2 server_logging
+        run: pytest --junitxml=server_logging.xml cpp-backend-tests-practicum/tests/test_s02_server_logging.py
+        env:
+          SERVER_DOMAIN: cppserver
+
+      - name: build tests sprint2 join_game
+        run: |
+          cd sprint2/problems/join_game/solution
+          docker build -t my_http_server .
+          echo "COMMAND_RUN=docker run --rm --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 my_http_server" >> $GITHUB_ENV
+
+      - name: run tests sprint2 join_game
+        run: pytest --junitxml=join_game.xml cpp-backend-tests-practicum/tests/test_s02_join_game.py
+        env:
+          SERVER_DOMAIN: cppserver
+
 
       - name: Publish XML reports
         uses: EnricoMi/publish-unit-test-result-action@v1

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint1\samples\tcp-udp\build\CMakeFiles\dd4baddc75718dc77e0d1d16d8ec5fb1\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{EB35D6AB-9C77-3C05-B738-9ED14EF59EA0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

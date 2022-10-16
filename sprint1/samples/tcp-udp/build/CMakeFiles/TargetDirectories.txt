@@ -1,0 +1,6 @@
+E:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build/CMakeFiles/TCPServer.dir
+E:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build/CMakeFiles/TCPClient.dir
+E:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build/CMakeFiles/UDPServer.dir
+E:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build/CMakeFiles/UDPClient.dir
+E:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build/CMakeFiles/ALL_BUILD.dir
+E:/Projects/GitHub/cpp-game-backend/sprint1/samples/tcp-udp/build/CMakeFiles/ZERO_CHECK.dir

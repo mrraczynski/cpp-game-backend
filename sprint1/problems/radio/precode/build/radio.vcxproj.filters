@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\radio\precode\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\radio\precode\src\audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\radio\precode\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{A97F482F-AB18-3470-9160-80DA4AE46A72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C3C30900-DF0B-384C-BB99-F8B4E4BDD63D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
