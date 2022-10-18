@@ -161,12 +161,12 @@ void HandleConnection(tcp::socket& socket, RequestHandler&& handle_request) {
 }
 
 int main() {
-    std::cout << "Server has started..."sv << std::endl;
     net::io_context ioc;
     const auto address = net::ip::make_address("0.0.0.0");
     constexpr unsigned short port = 8080;
 
     tcp::acceptor acceptor(ioc, { address, port });
+    std::cout << "Server has started..."sv << std::endl;
     while (true) {
         tcp::socket socket(ioc);
         acceptor.accept(socket);
@@ -183,7 +183,3 @@ int main() {
         t.detach();
     }
 }
-
-/*int main() {
-    // Выведите строчку "Server has started...", когда сервер будет готов принимать подключения
-}*/

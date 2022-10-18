@@ -64,7 +64,7 @@ enum RequestMethod
 // Создаёт StringResponse с заданными параметрами
 StringResponse MakeStringResponse(http::status status, std::string_view body, unsigned http_version,
     bool keep_alive, RequestMethod method,
-    std::string_view content_type = ContentType::TEXT_HTML) 
+    std::string_view content_type = ContentType::TEXT_HTML)
 {
     StringResponse response(status, http_version);
     response.set(http::field::content_type, content_type);
@@ -110,7 +110,7 @@ StringResponse HandleRequest(StringRequest&& req) {
     {
         method = RequestMethod::ANY;
         status = http::status::method_not_allowed;
-        content_type = ContentType::TEXT_HTML;        
+        content_type = ContentType::TEXT_HTML;
     }
 
     const auto text_response = [&req](http::status status, std::string_view text, RequestMethod method, std::string_view content_type) {
@@ -119,14 +119,6 @@ StringResponse HandleRequest(StringRequest&& req) {
 
     // Здесь можно обработать запрос и сформировать ответ, но пока всегда отвечаем: Hello
     return text_response(status, std::string_view(body), method, content_type);
-}
-
-void DumpRequest(const StringRequest& req) {
-    std::cout << req.method_string() << ' ' << req.target() << std::endl;
-    // Выводим заголовки запроса
-    for (const auto& header : req) {
-        std::cout << "  "sv << header.name_string() << ": "sv << header.value() << std::endl;
-    }
 }
 
 std::optional<StringRequest> ReadRequest(tcp::socket& socket, beast::flat_buffer& buffer) {
@@ -153,7 +145,6 @@ void HandleConnection(tcp::socket& socket, RequestHandler&& handle_request) {
 
         // Продолжаем обработку запросов, пока клиент их отправляет
         while (auto request = ReadRequest(socket, buffer)) {
-            //DumpRequest(*request);
             StringResponse response = handle_request(*std::move(request));
             http::write(socket, response);
             if (response.need_eof()) {
@@ -175,7 +166,7 @@ int main() {
     constexpr unsigned short port = 8080;
 
     tcp::acceptor acceptor(ioc, { address, port });
-    std::cout << "Server has started..."sv;
+    std::cout << "Server has started..."sv << std::endl;
     while (true) {
         tcp::socket socket(ioc);
         acceptor.accept(socket);
@@ -192,7 +183,3 @@ int main() {
         t.detach();
     }
 }
-
-/*int main() {
-    // Выведите строчку "Server has started...", когда сервер будет готов принимать подключения
-}*/
