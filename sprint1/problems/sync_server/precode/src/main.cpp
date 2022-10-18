@@ -121,14 +121,6 @@ StringResponse HandleRequest(StringRequest&& req) {
     return text_response(status, std::string_view(body), method, content_type);
 }
 
-void DumpRequest(const StringRequest& req) {
-    std::cout << req.method_string() << ' ' << req.target() << std::endl;
-    // Выводим заголовки запроса
-    for (const auto& header : req) {
-        std::cout << "  "sv << header.name_string() << ": "sv << header.value() << std::endl;
-    }
-}
-
 std::optional<StringRequest> ReadRequest(tcp::socket& socket, beast::flat_buffer& buffer) {
     beast::error_code ec;
     StringRequest req;
@@ -153,7 +145,6 @@ void HandleConnection(tcp::socket& socket, RequestHandler&& handle_request) {
 
         // Продолжаем обработку запросов, пока клиент их отправляет
         while (auto request = ReadRequest(socket, buffer)) {
-            //DumpRequest(*request);
             StringResponse response = handle_request(*std::move(request));
             http::write(socket, response);
             if (response.need_eof()) {
@@ -170,12 +161,12 @@ void HandleConnection(tcp::socket& socket, RequestHandler&& handle_request) {
 }
 
 int main() {
+    std::cout << "Server has started..."sv << std::endl;
     net::io_context ioc;
     const auto address = net::ip::make_address("0.0.0.0");
     constexpr unsigned short port = 8080;
 
     tcp::acceptor acceptor(ioc, { address, port });
-    std::cout << std::flush << "Server has started..."sv << std::flush << std::endl;
     while (true) {
         tcp::socket socket(ioc);
         acceptor.accept(socket);
