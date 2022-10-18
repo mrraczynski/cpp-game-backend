@@ -175,7 +175,7 @@ int main() {
     constexpr unsigned short port = 8080;
 
     tcp::acceptor acceptor(ioc, { address, port });
-    std::printf("Server has started...");
+    std::cout << std::flush << "Server has started..."sv << std::flush << std::endl;
     while (true) {
         tcp::socket socket(ioc);
         acceptor.accept(socket);
