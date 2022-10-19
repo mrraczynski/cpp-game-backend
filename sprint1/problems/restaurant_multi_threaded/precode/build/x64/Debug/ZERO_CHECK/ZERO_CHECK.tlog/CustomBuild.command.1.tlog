@@ -1,0 +1,10 @@
+^E:\PROJECTS\GITHUB\CPP-GAME-BACKEND\SPRINT1\PROBLEMS\RESTAURANT_MULTI_THREADED\PRECODE\BUILD\CMAKEFILES\A9501B252BCFD2FBC05D93117854EED9\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SE:/Projects/GitHub/cpp-game-backend/sprint1/problems/restaurant_multi_threaded/precode -BE:/Projects/GitHub/cpp-game-backend/sprint1/problems/restaurant_multi_threaded/precode/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/Projects/GitHub/cpp-game-backend/sprint1/problems/restaurant_multi_threaded/precode/build/restaurant.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
