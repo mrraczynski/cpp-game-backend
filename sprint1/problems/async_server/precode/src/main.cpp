@@ -25,21 +25,71 @@ struct ContentType {
     // При необходимости внутрь ContentType можно добавить и другие типы контента
 };
 
+enum RequestMethod
+{
+    GET,
+    HEAD,
+    ANY
+};
+
 // Создаёт StringResponse с заданными параметрами
 StringResponse MakeStringResponse(http::status status, std::string_view body, unsigned http_version,
-                                  bool keep_alive,
-                                  std::string_view content_type = ContentType::TEXT_HTML) {
+    bool keep_alive, RequestMethod method,
+    std::string_view content_type = ContentType::TEXT_HTML)
+{
     StringResponse response(status, http_version);
     response.set(http::field::content_type, content_type);
-    response.body() = body;
-    response.content_length(body.size());
+    if (method == RequestMethod::GET)
+    {
+        response.body() = body;
+        response.content_length(body.size());
+    }
+    else if (method == RequestMethod::HEAD)
+    {
+        response.body() = ""sv;
+        response.content_length(body.size());
+    }
+    else
+    {
+        response.body() = "Invalid method"sv;
+        response.set("Allow"sv, "GET, HEAD"sv);
+        response.content_length(14);
+    }
     response.keep_alive(keep_alive);
     return response;
 }
 
 StringResponse HandleRequest(StringRequest&& req) {
-    // Подставьте сюда код из синхронной версии HTTP-сервера
-    return MakeStringResponse(http::status::ok, "OK"sv, req.version(), req.keep_alive());
+    RequestMethod method;
+    http::status status;
+    std::string body;
+    std::string_view content_type;
+    body = "Hello, "s.append(req.target().substr(1));
+    if (req.method_string() == "GET"sv)
+    {
+        method = RequestMethod::GET;
+        status = http::status::ok;
+        content_type = ContentType::TEXT_HTML;
+    }
+    else if (req.method_string() == "HEAD"sv)
+    {
+        method = RequestMethod::HEAD;
+        status = http::status::ok;
+        content_type = ContentType::TEXT_HTML;
+    }
+    else
+    {
+        method = RequestMethod::ANY;
+        status = http::status::method_not_allowed;
+        content_type = ContentType::TEXT_HTML;
+    }
+
+    const auto text_response = [&req](http::status status, std::string_view text, RequestMethod method, std::string_view content_type) {
+        return MakeStringResponse(status, text, req.version(), req.keep_alive(), method, content_type);
+    };
+
+    // Здесь можно обработать запрос и сформировать ответ, но пока всегда отвечаем: Hello
+    return text_response(status, std::string_view(body), method, content_type);
 }
 
 // Запускает функцию fn на n потоках, включая текущий
@@ -73,7 +123,7 @@ int main() {
     const auto address = net::ip::make_address("0.0.0.0");
     constexpr net::ip::port_type port = 8080;
     http_server::ServeHttp(ioc, {address, port}, [](auto&& req, auto&& sender) {
-        // sender(HandleRequest(std::forward<decltype(req)>(req)));
+        sender(HandleRequest(std::forward<decltype(req)>(req)));
     });
 
     // Эта надпись сообщает тестам о том, что сервер запущен и готов обрабатывать запросы
