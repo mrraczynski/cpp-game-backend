@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\http_server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\boost_json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\json_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\request_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\http_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\sdk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\tagged.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\json_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\src\request_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint1\problems\map_json\precode\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{BDE5C4D1-F0C6-37A4-92F6-E3A4870AC25C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{A109B845-0484-36F3-B7F8-593DB95C5FF4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

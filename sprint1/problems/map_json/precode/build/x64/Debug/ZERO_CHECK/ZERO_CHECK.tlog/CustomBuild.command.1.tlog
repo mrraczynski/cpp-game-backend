@@ -1,0 +1,10 @@
+^E:\PROJECTS\GITHUB\CPP-GAME-BACKEND\SPRINT1\PROBLEMS\MAP_JSON\PRECODE\BUILD\CMAKEFILES\663A5A6DDD443565801DE4D2F6B18BC9\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SE:/Projects/GitHub/cpp-game-backend/sprint1/problems/map_json/precode -BE:/Projects/GitHub/cpp-game-backend/sprint1/problems/map_json/precode/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/Projects/GitHub/cpp-game-backend/sprint1/problems/map_json/precode/build/game_server.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
