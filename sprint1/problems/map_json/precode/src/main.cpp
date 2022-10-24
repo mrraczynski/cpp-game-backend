@@ -37,7 +37,7 @@ int main(int argc, const char* argv[]) {
     }
     try {
         // 1. Загружаем карту из файла и построить модель игры
-        model::Game game = json_loader::LoadGame(/*"E:/Projects/GitHub/cpp-game-backend/sprint1/problems/map_json/precode/data/config.json"*/svargv[1]);
+        model::Game game = json_loader::LoadGame(/*"E:/Projects/GitHub/cpp-game-backend/sprint1/problems/map_json/precode/data/config.json"sv*/argv[1]);
 
         // 2. Инициализируем io_context
         const unsigned num_threads = std::thread::hardware_concurrency();
