@@ -72,7 +72,7 @@ public:
                 }
                 else if (api.compare("/api/"sv) == 0)
                 {
-                    response = StringResponse(http::status::not_found, req.version());
+                    response = StringResponse(http::status::bad_request, req.version());
                     response.set(http::field::content_type, ContentType::APPLICATION_JSON);
                     json_loader::GetErrorJson(response.body(), "badRequest", "Bad request");
                     response.content_length(response.body().size());
