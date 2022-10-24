@@ -3,6 +3,14 @@
 
 namespace json_loader {
 
+    void GetErrorJson(std::string& jsn, const std::string& code, const std::string& message)
+    {
+        json::object error_json;
+        error_json["code"] = code;
+        error_json["message"] = message;
+        jsn = json::serialize(error_json);
+    }
+
     void GetMapsJson(std::string& jsn, const model::Game& game)
     {
         json::array maps_json;
