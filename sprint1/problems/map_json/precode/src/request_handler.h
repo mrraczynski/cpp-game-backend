@@ -40,11 +40,11 @@ public:
             {
                 std::string api = std::string(req.target());
                 api.erase(5, api.size());
-                std::string_view sv("/api/v1/maps/"sv);
-                response.set(http::field::content_type, ContentType::APPLICATION_JSON);
+                std::string_view sv("/api/v1/maps/"sv);                               
                 if (req.target().compare("/api/v1/maps"sv) == 0)
                 {
                     response = StringResponse(http::status::ok, req.version());
+                    response.set(http::field::content_type, ContentType::APPLICATION_JSON);
                     json_loader::GetMapsJson(response.body(), game_);
                     response.content_length(response.body().size());
                     send(response);
@@ -56,6 +56,7 @@ public:
                     if (game_.FindMap(model::Map::Id(tg)) != nullptr)
                     {
                         response = StringResponse(http::status::ok, req.version());
+                        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
                         json_loader::GetMapJsonById(response.body(), game_, tg);
                         response.content_length(response.body().size());
                         send(response);
@@ -63,6 +64,7 @@ public:
                     else
                     {
                         response = StringResponse(http::status::not_found, req.version());
+                        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
                         json_loader::GetErrorJson(response.body(), "mapNotFound", "Map not found");
                         response.content_length(response.body().size());
                         send(response);
@@ -71,11 +73,13 @@ public:
                 else if (api.compare("/api/"sv) == 0)
                 {
                     response = StringResponse(http::status::not_found, req.version());
+                    response.set(http::field::content_type, ContentType::APPLICATION_JSON);
                     json_loader::GetErrorJson(response.body(), "badRequest", "Bad request");
                     response.content_length(response.body().size());
                     send(response);
                 }
             }
+            std::cout << response;
         }
         catch (std::exception& e)
         {
