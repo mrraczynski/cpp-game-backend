@@ -41,6 +41,7 @@ public:
                 std::string api = std::string(req.target());
                 api.erase(5, api.size());
                 std::string_view sv("/api/v1/maps/"sv);
+                response.set(http::field::content_type, ContentType::APPLICATION_JSON);
                 if (req.target().compare("/api/v1/maps"sv) == 0)
                 {
                     response = StringResponse(http::status::ok, req.version());
