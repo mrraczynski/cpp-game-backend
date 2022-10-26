@@ -25,10 +25,9 @@ namespace json_loader {
         jsn = json::serialize(maps_json);
     }
 
-    void GetMapJsonById(std::string& jsn, const model::Game& game, const std::string& map_id)
+    void GetMapJson(std::string& jsn, const model::Map* map)
     {        
         json::object map_obj;
-        const model::Map* map = game.FindMap(model::Map::Id(map_id));
         map_obj["id"] = *map->GetId();
         map_obj["name"] = map->GetName();
         {

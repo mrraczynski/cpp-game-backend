@@ -23,12 +23,7 @@ namespace http_server {
         // Запрещаем копирование и присваивание объектов SessionBase и его наследников
         SessionBase(const SessionBase&) = delete;
         SessionBase& operator=(const SessionBase&) = delete;
-        void Run() {
-            // Вызываем метод Read, используя executor объекта stream_.
-            // Таким образом вся работа со stream_ будет выполняться, используя его executor
-            net::dispatch(stream_.get_executor(),
-                beast::bind_front_handler(&SessionBase::Read, GetSharedThis()));
-        }
+        void Run();
     protected:
         using HttpRequest = http::request<http::string_body>;
         explicit SessionBase(tcp::socket&& socket)
@@ -51,49 +46,14 @@ namespace http_server {
         virtual void HandleRequest(HttpRequest&& request) = 0;
         virtual std::shared_ptr<SessionBase> GetSharedThis() = 0;
     private:
-        void Read() {
-            using namespace std::literals;
-            // Очищаем запрос от прежнего значения (метод Read может быть вызван несколько раз)
-            request_ = {};
-            stream_.expires_after(30s);
-            // Считываем request_ из stream_, используя buffer_ для хранения считанных данных
-            http::async_read(stream_, buffer_, request_,
-                // По окончании операции будет вызван метод OnRead
-                beast::bind_front_handler(&SessionBase::OnRead, GetSharedThis()));
-        }
+        void Read();
 
-        void OnRead(beast::error_code ec, [[maybe_unused]] std::size_t bytes_read) {
-            using namespace std::literals;
-            if (ec == http::error::end_of_stream) {
-                // Нормальная ситуация - клиент закрыл соединение
-                return Close();
-            }
-            if (ec) {
-                std::cerr << "read"sv << ": " << ec.message() << std::endl;
-                return;
-            }
-            HandleRequest(std::move(request_));
-        }
+        void OnRead(beast::error_code ec, [[maybe_unused]] std::size_t bytes_read);
 
-        void Close() {
-            beast::error_code ec;
-            stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
-        }
+        void Close();
 
-        void OnWrite(bool close, beast::error_code ec, [[maybe_unused]] std::size_t bytes_written) {
-            if (ec) {
-                std::cerr << std::string_view("write") << ": " << ec.message() << std::endl;
-                return;
-            }
+        void OnWrite(bool close, beast::error_code ec, [[maybe_unused]] std::size_t bytes_written);
 
-            if (close) {
-                // Семантика ответа требует закрыть соединение
-                return Close();
-            }
-
-            // Считываем следующий запрос
-            Read();
-        }
         // tcp_stream содержит внутри себя сокет и добавляет поддержку таймаутов
         beast::tcp_stream stream_;
         beast::flat_buffer buffer_;

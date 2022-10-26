@@ -1,6 +1,5 @@
 #pragma once
 #include "http_server.h"
-#include "model.h"
 #include "json_loader.h"
 
 namespace http_handler {
@@ -35,51 +34,38 @@ public:
         // Обработать запрос request и отправить ответ, используя send
         try
         {
-            StringResponse response;
-            if (req.method() == http::verb::get)
+            std::vector<std::string_view> target_vec = SplitRequest(req.target());
+            if (req.method() != http::verb::get)
             {
-                std::string api = std::string(req.target());
-                api.erase(5, api.size());
-                std::string_view sv("/api/v1/maps/"sv);                               
-                if (req.target().compare("/api/v1/maps"sv) == 0)
+                send(ResponseNotAllowed(req));
+                return;
+            }
+            else if (!IsApiRequest(target_vec))
+            {
+                send(ResponseError(req, "badRequest", "Bad request")); //TODO: new answer if needed
+                return;
+            }
+            else if (!IsGoodRequest(target_vec))
+            {
+                send(ResponseError(req, "badRequest", "Bad request"));
+                return;
+            }
+            else if (!HasMapID(target_vec))
+            {
+                send(ResponseAllMaps(req));
+            }
+            else
+            {
+                const model::Map* map = game_.FindMap(model::Map::Id(std::string(target_vec[4])));
+                if (map != nullptr)
                 {
-                    response = StringResponse(http::status::ok, req.version());
-                    response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-                    json_loader::GetMapsJson(response.body(), game_);
-                    response.content_length(response.body().size());
-                    send(response);
+                    send(ResponseMapById(req, map));
                 }
-                else if (req.target().find(sv) != std::string::npos)
+                else
                 {
-                    std::string tg(req.target());
-                    tg.erase(0, sv.length());
-                    if (game_.FindMap(model::Map::Id(tg)) != nullptr)
-                    {
-                        response = StringResponse(http::status::ok, req.version());
-                        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-                        json_loader::GetMapJsonById(response.body(), game_, tg);
-                        response.content_length(response.body().size());
-                        send(response);
-                    }
-                    else
-                    {
-                        response = StringResponse(http::status::not_found, req.version());
-                        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-                        json_loader::GetErrorJson(response.body(), "mapNotFound", "Map not found");
-                        response.content_length(response.body().size());
-                        send(response);
-                    }
-                }
-                else if (api.compare("/api/"sv) == 0)
-                {
-                    response = StringResponse(http::status::bad_request, req.version());
-                    response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-                    json_loader::GetErrorJson(response.body(), "badRequest", "Bad request");
-                    response.content_length(response.body().size());
-                    send(response);
+                    send(ResponseError(req, "mapNotFound", "Map not found"));
                 }
             }
-            std::cout << response;
         }
         catch (std::exception& e)
         {
@@ -89,8 +75,54 @@ public:
     }
 
 private:
-    model::Game& game_;
+    std::vector<std::string_view> SplitRequest(const std::string_view target);
 
+    template <typename Body, typename Allocator>
+    StringResponse ResponseMapById(http::request<Body, http::basic_fields<Allocator>> req, const model::Map* map)
+    {
+        StringResponse response = StringResponse(http::status::ok, req.version());
+        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
+        json_loader::GetMapJson(response.body(), map);
+        response.content_length(response.body().size());
+        return response;
+    }
+
+    template <typename Body, typename Allocator>
+    StringResponse ResponseNotAllowed(http::request<Body, http::basic_fields<Allocator>> req)
+    {
+        StringResponse response = StringResponse(http::status::method_not_allowed, req.version());
+        return response;
+    }
+
+    template <typename Body, typename Allocator>
+    StringResponse ResponseAllMaps(http::request<Body, http::basic_fields<Allocator>> req)
+    {
+        StringResponse response = StringResponse(http::status::ok, req.version());
+        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
+        json_loader::GetMapsJson(response.body(), game_);
+        response.content_length(response.body().size());
+        return response;
+    }
+
+    template <typename Body, typename Allocator>
+    StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const std::string& code, const std::string& message)
+    {
+        StringResponse response = StringResponse(http::status::not_found, req.version());
+        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
+        json_loader::GetErrorJson(response.body(), code, message);
+        response.content_length(response.body().size());
+        return response;
+    }
+
+    bool IsApiRequest(const std::vector<std::string_view>& target_vec);
+
+    bool IsGoodRequest(const std::vector<std::string_view>& target_vec);
+
+    bool HasMapID(const std::vector<std::string_view>& target_vec);
+
+    const model::Map* FindMapID(const std::vector<std::string_view>& target_vec);
+
+    model::Game& game_;
 };
 
 }  // namespace http_handler
