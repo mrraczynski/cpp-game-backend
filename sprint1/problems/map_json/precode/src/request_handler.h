@@ -42,12 +42,12 @@ public:
             }
             else if (!IsApiRequest(target_vec))
             {
-                send(ResponseError(req, "badRequest", "Bad request")); //TODO: new answer if needed
+                send(ResponseError(req, http::status::bad_request, "badRequest", "Bad request")); //TODO: new answer if needed
                 return;
             }
             else if (!IsGoodRequest(target_vec))
             {
-                send(ResponseError(req, "badRequest", "Bad request"));
+                send(ResponseError(req, http::status::bad_request, "badRequest", "Bad request"));
                 return;
             }
             else if (!HasMapID(target_vec))
@@ -63,7 +63,7 @@ public:
                 }
                 else
                 {
-                    send(ResponseError(req, "mapNotFound", "Map not found"));
+                    send(ResponseError(req, http::status::not_found, "mapNotFound", "Map not found"));
                 }
             }
         }
@@ -105,9 +105,9 @@ private:
     }
 
     template <typename Body, typename Allocator>
-    StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const std::string& code, const std::string& message)
+    StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const http::status& status_code, const std::string& code, const std::string& message)
     {
-        StringResponse response = StringResponse(http::status::not_found, req.version());
+        StringResponse response = StringResponse(status_code, req.version());
         response.set(http::field::content_type, ContentType::APPLICATION_JSON);
         json_loader::GetErrorJson(response.body(), code, message);
         response.content_length(response.body().size());
