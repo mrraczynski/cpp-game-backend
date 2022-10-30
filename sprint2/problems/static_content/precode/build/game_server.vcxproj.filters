@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\http_server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\boost_json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\json_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\request_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\http_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\sdk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\tagged.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\json_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\request_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\src\command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\static_content\precode\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{DBD451B2-21C9-3BC5-A2DE-855EA10146E4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{E33C24C7-DA34-3B5F-93E7-1D53221D9BC5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
