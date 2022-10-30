@@ -1,4 +1,5 @@
 #include "request_handler.h"
+#include <charconv>
 
 namespace http_handler {
 	std::vector<std::string_view> RequestHandler::SplitRequest(const std::string_view target)
