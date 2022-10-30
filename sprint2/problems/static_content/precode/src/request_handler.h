@@ -35,7 +35,7 @@ struct ContentType {
     constexpr static std::string_view IMAGE_BMP = "image/bmp"sv;
     constexpr static std::string_view IMAGE_ICO = "image/vnd.microsoft.icon"sv;
     constexpr static std::string_view IMAGE_TIFF = "image/tiff"sv;
-    constexpr static std::string_view IMAGE_SVG = "image/svg + xml"sv;
+    constexpr static std::string_view IMAGE_SVG = "image/svg+xml"sv;
     constexpr static std::string_view AUDIO_MPEG = "audio/mpeg"sv;
     constexpr static std::string_view FOLDER = "folder"sv;
     // При необходимости внутрь ContentType можно добавить и другие типы контента
