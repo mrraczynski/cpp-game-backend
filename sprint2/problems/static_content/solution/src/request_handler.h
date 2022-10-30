@@ -35,7 +35,7 @@ struct ContentType {
     constexpr static std::string_view IMAGE_BMP = "image/bmp"sv;
     constexpr static std::string_view IMAGE_ICO = "image/vnd.microsoft.icon"sv;
     constexpr static std::string_view IMAGE_TIFF = "image/tiff"sv;
-    constexpr static std::string_view IMAGE_SVG = "image/svg + xml"sv;
+    constexpr static std::string_view IMAGE_SVG = "image/svg+xml"sv;
     constexpr static std::string_view AUDIO_MPEG = "audio/mpeg"sv;
     constexpr static std::string_view FOLDER = "folder"sv;
     // При необходимости внутрь ContentType можно добавить и другие типы контента
@@ -112,10 +112,10 @@ private:
     }
 
     template <typename Body, typename Allocator>
-    StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const http::status& status_code, const std::string& code, const std::string& message)
+    StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const std::string_view& content_type, const http::status& status_code, const std::string& code, const std::string& message)
     {
         StringResponse response = StringResponse(status_code, req.version());
-        response.set(http::field::content_type, ContentType::APPLICATION_JSON);
+        response.set(http::field::content_type, content_type);
         json_loader::GetErrorJson(response.body(), code, message);
         response.content_length(response.body().size());
         return response;
@@ -136,7 +136,7 @@ private:
     {
         if (!IsGoodRequest(target_vec))
         {
-            send(ResponseError(req, http::status::bad_request, "badRequest", "Bad request"));
+            send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::bad_request, "badRequest", "Bad request"));
             return;
         }
         else
@@ -154,7 +154,7 @@ private:
                 }
                 else
                 {
-                    send(ResponseError(req, http::status::not_found, "mapNotFound", "Map not found"));
+                    send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::not_found, "mapNotFound", "Map not found"));
                 }
             }
         }
@@ -166,16 +166,17 @@ private:
         fs::path absolute_path(static_dir_ / decoded_path.substr(1));
         if (IsSubPath(absolute_path, static_dir_))
         {
-            std::pair<bool, const std::string_view&> content_type = GetFileContentType(decoded_path); 
+            std::pair<bool, std::string_view> content_type = GetFileContentType(decoded_path); 
             if (!content_type.first)
             {
                 absolute_path = absolute_path / "index.html"sv;
+                content_type.second = ContentType::TEXT_HTML;
             }
 
             http::file_body::value_type file;
             if (sys::error_code ec; file.open(absolute_path.string().data(), beast::file_mode::read, ec), ec)
             {
-                send(ResponseError(req, http::status::not_found, "fileNotFound", "File not found"));
+                send(ResponseError(req, ContentType::TEXT_PLAIN, http::status::not_found, "fileNotFound", "File not found"));
             }
             else
             {
@@ -184,7 +185,7 @@ private:
         }
         else
         {
-            send(ResponseError(req, http::status::bad_request, "badRequest", "Bad request"));
+            send(ResponseError(req, ContentType::TEXT_PLAIN, http::status::bad_request, "badRequest", "Bad request"));
         }
     }
 
@@ -200,7 +201,7 @@ private:
 
     std::string UrlDecode(const std::string_view& value);
 
-    std::pair<bool, const std::string_view&> GetFileContentType(const std::string& decoded_path);
+    std::pair<bool, std::string_view> GetFileContentType(const std::string& decoded_path);
 
     model::Game& game_;
 
