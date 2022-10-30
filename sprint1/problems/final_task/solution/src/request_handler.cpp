@@ -5,8 +5,7 @@ namespace http_handler {
 	{
         std::vector<std::string_view> target_vec;
         std::string_view delim("/");
-        size_t prev = 0;
-        size_t next;
+        size_t prev = 0, next = 0;
         size_t delta = delim.length();
 
         while ((next = target.find(delim, prev)) != std::string::npos) {
@@ -25,7 +24,16 @@ namespace http_handler {
 
     bool RequestHandler::IsGoodRequest(const std::vector<std::string_view>& target_vec)
     {
-        return IsApiRequest(target_vec) && target_vec[2].compare("v1") == 0 && target_vec[3].compare("maps") == 0;
+        if (target_vec.size() >= 4)
+        {
+            return IsApiRequest(target_vec) &&
+                target_vec[2].compare("v1") == 0 &&
+                target_vec[3].compare("maps") == 0;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     bool RequestHandler::HasMapID(const std::vector<std::string_view>& target_vec)
