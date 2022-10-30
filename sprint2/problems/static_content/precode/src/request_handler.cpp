@@ -90,7 +90,7 @@ namespace http_handler {
         return true;
     }
 
-    std::pair<bool, const std::string_view&> RequestHandler::GetFileContentType(const std::string& decoded_path)
+    std::pair<bool, std::string_view> RequestHandler::GetFileContentType(const std::string& decoded_path)
     {
         if (decoded_path[decoded_path.size() - 1] == '/' || decoded_path[decoded_path.size() - 1] == '\\')
         {
