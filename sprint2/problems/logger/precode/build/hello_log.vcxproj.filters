@@ -6,9 +6,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\src\my_logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{423399FA-A593-3BDD-B5EE-40DA7F0A2524}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{2CA93017-B606-3362-833A-65F7F8167C20}</UniqueIdentifier>
     </Filter>

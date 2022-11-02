@@ -1,3 +1,3 @@
 ﻿  main.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\src\main.cpp(16,35): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\src\my_logger.h(32,35): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   hello_log.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\build\bin\hello_log.exe

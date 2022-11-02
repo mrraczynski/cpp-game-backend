@@ -326,6 +326,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\src\main.cpp" />
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\src\my_logger.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\logger\precode\build\ZERO_CHECK.vcxproj">

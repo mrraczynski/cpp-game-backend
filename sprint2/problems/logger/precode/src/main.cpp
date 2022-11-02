@@ -1,13 +1,6 @@
-#include <thread>
-#include <fstream>
-#include <chrono>
-#include <iomanip>
-#include <iostream>
-#include <mutex>
+#include "my_logger.h"
 
-using namespace std::literals;
-
-#define LOG(X) Logger::GetInstance().Log([&](std::ostream& o) { o << X; })
+/*#define LOG(X) Logger::GetInstance().Log([&](std::ostream& o) { o << X; })
 
 class Logger {
     static inline std::_Timeobj<char, const tm*> GetTimeStamp() {
@@ -50,7 +43,7 @@ private:
 
     // для демонстрации пока оставим файл в текущей директории
     std::ofstream log_file_{ "logs/sample.log"s };
-};
+};*/
 
 void LogIndexInThread(int f, int i) {
     //LOG("Thread " << f << " index " << i);
