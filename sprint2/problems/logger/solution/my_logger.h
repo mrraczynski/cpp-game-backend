@@ -59,7 +59,7 @@ public:
     }
     template<typename T, typename... Args>
     void LogMessage(T first, Args... messages) {
-        log_file_ << first << " "sv;
+        log_file_ << first;
         LogMessage(messages...);
     }
 

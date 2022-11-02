@@ -1,67 +1,81 @@
 #include "my_logger.h"
 
-/*#define LOG(X) Logger::GetInstance().Log([&](std::ostream& o) { o << X; })
+/*#include <string_view>
+#include <thread>
+#include <cassert>
+#include <sstream>
+#include <string>*/
+#include <iostream>
+#include <filesystem>
+/*#include <fstream>
+#include <algorithm>*/
 
-class Logger {
-    static inline std::_Timeobj<char, const tm*> GetTimeStamp() {
-        const auto now = std::chrono::system_clock::now();
-        const auto t_c = std::chrono::system_clock::to_time_t(now);
-        return std::put_time(std::localtime(&t_c), "%F %T");
+using namespace std::literals;
+
+
+bool CompareFiles(const std::filesystem::path& file_path, const std::filesystem::path& ref_file_path) {
+    if (file_path.filename() != ref_file_path.filename()) {
+        std::cout << "file_path: " << file_path << std::endl;
+        std::cout << "ref_file_path: " << ref_file_path << std::endl;
+        std::cout << "Filename error! " << std::endl;
+        return false;
     }
 
-public:
-    void LogMessage() {
-        log_file_ << std::endl;
-        return;
-    }
-    template<typename T, typename... Args>
-    void LogMessage(T first, Args... messages) {      
-        log_file_ << first << " "sv;
-        LogMessage(messages...);
+    if (!std::filesystem::exists(file_path)) {
+        std::cout << "file_path: " << file_path << std::endl;
+        std::cout << "File not found!" << std::endl;
+        return false;
     }
 
-    static Logger& GetInstance() {
-        static Logger obj;
-        return obj;
+    auto file_size = std::filesystem::file_size(file_path);
+    auto ref_file_size = std::filesystem::file_size(ref_file_path);
+
+    if (file_size != ref_file_size) {
+        std::cout << "file_path: " << file_path << std::endl;
+        std::cout << "ref_file_path: " << ref_file_path << std::endl;
+        std::cout << "Error: file size mismatch! " << file_size << " != " << ref_file_size << std::endl;
+        return false;
     }
 
-    template<typename... Args>
-    void Log(Args... s) {
-        std::lock_guard g(mutex_);
-        log_file_ << GetTimeStamp() << ": "sv;
-        LogMessage(s...);
+    std::ifstream fs(file_path, std::ifstream::binary | std::ifstream::ate);
+    std::ifstream ref_fs(ref_file_path, std::ifstream::binary | std::ifstream::ate);
+
+    if (fs.fail() || ref_fs.fail()) {
+        std::cout << "file_path: " << file_path << std::endl;
+        std::cout << "ref_file_path: " << ref_file_path << std::endl;
+        std::cout << "Error reading file! " << std::endl;
+        return false;
     }
 
-private:
-    template<typename Arg>
-    Arg GetArg(Arg a)
-    {
-        return a;
-    }
-
-    std::mutex mutex_;
-
-    // для демонстрации пока оставим файл в текущей директории
-    std::ofstream log_file_{ "logs/sample.log"s };
-};*/
-
-void LogIndexInThread(int f, int i) {
-    //LOG("Thread " << f << " index " << i);
-    Logger::GetInstance().Log(f, i);
+    return true;
 }
 
 int main() {
-    std::thread thread1([]() {
-        for (int i = 0; i < 1000; ++i) {
-            LogIndexInThread(1, i);
-        }
-        });
-    std::thread thread2([]() {
-        for (int i = 0; i < 1000; ++i) {
-            LogIndexInThread(2, i);
-        }
-        });
+    const std::filesystem::path logs_path("E:/Projects/GitHub/cpp-game-backend/sprint2/problems/logger/precode/build/logs/");
+    const std::filesystem::path reference_path = std::filesystem::current_path() / std::filesystem::path("E:/Projects/GitHub/cpp-game-backend/cpp-backend-tests-practicum/tests/cpp/test_s02_logger/reference");
 
-    thread1.join();
-    thread2.join();
+    Logger::GetInstance().SetTimestamp(std::chrono::system_clock::time_point{ 1000000s });
+    LOG("Hello "sv, "world "s, 123);
+    LOG(1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0,
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0);
+
+    Logger::GetInstance().SetTimestamp(std::chrono::system_clock::time_point{ 10000000s });
+    LOG("Brilliant logger.", " ", "I Love it");
+
+    static const int attempts = 100000;
+    for (int i = 0; i < attempts; ++i) {
+        Logger::GetInstance().SetTimestamp(std::chrono::system_clock::time_point(std::chrono::seconds(10000000 + i * 100)));
+        LOG("Logging attempt ", i, ". ", "I Love it");
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator{ reference_path }) {
+        std::filesystem::path filename = entry.path().filename();
+        if (!CompareFiles(logs_path / filename, entry.path())) {
+            std::cout << "Check failed!" << std::endl;
+            return -1;
+        }
+    }
+
+    std::cout << "Success!" << std::endl;
 }
