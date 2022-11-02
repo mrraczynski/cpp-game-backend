@@ -26,7 +26,7 @@ class Logger {
         return std::chrono::system_clock::now();
     }
 
-    inline std::_Timeobj<char, const tm*> GetTimeStamp() const {
+    auto GetTimeStamp() const {
         const auto now = GetTime();
         const auto t_c = std::chrono::system_clock::to_time_t(now);
         return std::put_time(std::localtime(&t_c), "%F %T");
