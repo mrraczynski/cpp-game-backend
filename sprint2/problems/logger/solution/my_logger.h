@@ -14,8 +14,7 @@ using namespace std::literals;
 
 #define LOG(...) Logger::GetInstance().Log(__VA_ARGS__)
 
-//constexpr const char* logs_path_ = "/var/log/" ;
-constexpr const char* logs_path_ = "E:/Projects/GitHub/cpp-game-backend/sprint2/problems/logger/precode/build/logs/";
+constexpr const char* logs_path_ = "/var/log/" ;
 
 class Logger {
     auto GetTime() const {
