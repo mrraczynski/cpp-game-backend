@@ -1,5 +1,5 @@
 #include "sdk.h"
-//
+
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/signal_set.hpp>
 #include <boost/asio/steady_timer.hpp>
@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "request_handler.h"
+#include "logger.h"
 
 using namespace std::literals;
 namespace net = boost::asio;

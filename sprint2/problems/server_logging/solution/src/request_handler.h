@@ -4,7 +4,6 @@
 #include "http_server.h"
 #include "json_loader.h"
 
-
 #define BOOST_BEAST_USE_STD_STRING_VIEW
 
 namespace http_handler {

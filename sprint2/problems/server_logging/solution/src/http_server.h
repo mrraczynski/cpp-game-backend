@@ -9,6 +9,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <iostream>
+//#include "logger.h"
 
 namespace http_server {
 
