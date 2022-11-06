@@ -54,10 +54,12 @@ class Logger {
     Logger(const Logger&) = delete;
 
 public:
+    
     void LogMessage() {
         log_file_ << std::endl;
         return;
     }
+
     template<typename T, typename... Args>
     void LogMessage(T first, Args... messages) {
         log_file_ << first;
