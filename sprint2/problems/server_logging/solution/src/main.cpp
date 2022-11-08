@@ -7,7 +7,6 @@
 #include <thread>
 
 #include "request_handler.h"
-#include "logger.h"
 
 using namespace std::literals;
 namespace net = boost::asio;
@@ -36,6 +35,8 @@ int main(int argc, const char* argv[]) {
         return EXIT_FAILURE;
     }
     try {
+        logger::InitBoostLog();
+
         // 1. Загружаем карту из файла и построить модель игры
         model::Game game = json_loader::LoadGame(argv[1]);
 
@@ -47,7 +48,11 @@ int main(int argc, const char* argv[]) {
         net::signal_set signals(ioc, SIGINT, SIGTERM);
         signals.async_wait([&ioc](const sys::error_code& ec, [[maybe_unused]] int signal_number) {
             if (!ec) {
-                std::cout << "Signal "sv << signal_number << " received"sv << std::endl;
+                //std::cout << "Signal "sv << signal_number << " received"sv << std::endl;
+                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value{ 
+                    {"code", 0},
+                    logger::LoggerData::GetDataJson("exception", std::string()) }) 
+                    << "server exited"sv;
                 ioc.stop();
             }
             });
@@ -55,23 +60,34 @@ int main(int argc, const char* argv[]) {
         // 4. Создаём обработчик HTTP-запросов и связываем его с моделью игры
         http_handler::RequestHandler handler{game, argv[2]};
 
+        //http_handler::LoggingRequestHandler logging_handler{ std::forward<http_handler::RequestHandler>(handler) };
+
         // 5. Запустить обработчик HTTP-запросов, делегируя их обработчику запросов
         const auto address = net::ip::make_address("0.0.0.0");
         constexpr unsigned short port = 8080;
         http_server::ServeHttp(ioc, {address, port}, [&handler](auto&& req, auto&& send) {
+            //logging_handler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
             handler(std::forward<decltype(req)>(req), std::forward<decltype(send)>(send));
         });
         
 
         // Эта надпись сообщает тестам о том, что сервер запущен и готов обрабатывать запросы
-        std::cout << "Server has started..."sv << std::endl;
+        //std::cout << "Server has started..."sv << std::endl;
+        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data,
+            logger::LoggerData::GetDataJson("port", std::to_string(port),
+                "address", address.to_string()))
+            << "server started"sv;
 
         // 6. Запускаем обработку асинхронных операций
         RunWorkers(std::max(1u, num_threads), [&ioc] {
             ioc.run();
         });
     } catch (const std::exception& ex) {
-        std::cerr << ex.what() << std::endl;
+        //std::cerr << ex.what() << std::endl;
+        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data,
+            logger::LoggerData::GetDataJson("code", "EXIT_FAILURE",
+                "exception", ex.what()))
+            << "server exited"sv;
         return EXIT_FAILURE;
     }
 }

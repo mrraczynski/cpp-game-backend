@@ -18,6 +18,12 @@ namespace http_server {
         http::async_read(stream_, buffer_, request_,
             // По окончании операции будет вызван метод OnRead
             beast::bind_front_handler(&SessionBase::OnRead, GetSharedThis()));
+        begin = chrono::steady_clock::now();
+        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, 
+            logger::LoggerData::GetDataJson("ip", stream_.socket().remote_endpoint().address().to_string(), 
+                "URI", std::string(request_.target()),
+                "method", std::string(request_.method_string())))
+            << "request received"sv;
     }
 
     void SessionBase::OnRead(beast::error_code ec, [[maybe_unused]] std::size_t bytes_read) {
@@ -27,7 +33,13 @@ namespace http_server {
             return Close();
         }
         if (ec) {
-            std::cerr << "read"sv << ": " << ec.message() << std::endl;
+            //std::cerr << "read"sv << ": " << ec.message() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"code", ec.value()},
+                    {"text", ec.message()},
+                    {"where", "read"}
+                })) << "error"sv;
             return;
         }
         HandleRequest(std::move(request_));
@@ -40,7 +52,13 @@ namespace http_server {
 
     void SessionBase::OnWrite(bool close, beast::error_code ec, [[maybe_unused]] std::size_t bytes_written) {
         if (ec) {
-            std::cerr << std::string_view("write") << ": " << ec.message() << std::endl;
+            //std::cerr << std::string_view("write") << ": " << ec.message() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"code", ec.value()},
+                    {"text", ec.message()},
+                    {"where", "write"}
+                })) << "error"sv;
             return;
         }
 

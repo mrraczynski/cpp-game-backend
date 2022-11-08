@@ -9,7 +9,8 @@
 #include <boost/beast/http.hpp>
 #include <boost/asio/dispatch.hpp>
 #include <iostream>
-//#include "logger.h"
+#include "logger.h"
+#include <chrono>
 
 namespace http_server {
 
@@ -18,6 +19,8 @@ namespace http_server {
     namespace beast = boost::beast;
     namespace sys = boost::system;
     namespace http = boost::beast::http;
+    namespace chrono = std::chrono;
+    using namespace std::literals;
 
     class SessionBase {
     public:
@@ -41,6 +44,12 @@ namespace http_server {
                 [safe_response, self](beast::error_code ec, std::size_t bytes_written) {
                     self->OnWrite(safe_response->need_eof(), ec, bytes_written);
                 });
+            auto dur = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data,
+                logger::LoggerData::GetDataJson("response_time", std::to_string(dur),
+                    "URI", std::to_string(safe_response->result_int()),
+                    "method", std::string((*safe_response)["Content-Type"])))
+                << "response sent"sv;
         }
 
         // Обработку запроса делегируем подклассу
@@ -59,6 +68,8 @@ namespace http_server {
         beast::tcp_stream stream_;
         beast::flat_buffer buffer_;
         HttpRequest request_;
+        chrono::steady_clock::time_point begin;
+        chrono::steady_clock::time_point end;
     };
 
     template <typename RequestHandler>
@@ -138,7 +149,13 @@ namespace http_server {
             using namespace std::literals;
 
             if (ec) {
-                std::cerr << "accept"sv << ": " << ec.message() << std::endl;
+                //std::cerr << "accept"sv << ": " << ec.message() << std::endl;
+                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                    {
+                        {"code", ec.value()},
+                        {"text", ec.message()},
+                        {"where", "accept"}
+                    })) << "error"sv;
                 return;
             }
 

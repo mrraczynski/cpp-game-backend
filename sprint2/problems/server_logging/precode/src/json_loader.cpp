@@ -132,7 +132,7 @@ namespace json_loader {
             for (int office_inc = 0; office_inc < offices_arr.size(); ++office_inc)
             {
                 const auto& building_obj = offices_arr[office_inc].as_object();
-                model::Office office(model::Office::Id(std::string(building_obj.at(ID).as_string())),
+                model::Office office(model::Office::Id(std::string(building_obj.at(ID).as_string().data())),
                     MakePoint(building_obj.at(X), building_obj.at(Y)),
                     model::Offset{ building_obj.at(OFFSET_X).to_number<int>(), building_obj.at(OFFSET_Y).to_number<int>() });
                 map.AddOffice(office);
@@ -202,7 +202,7 @@ namespace json_loader {
             for (int map_inc = 0; map_inc < maps_arr.size(); ++map_inc)
             {
                 const auto& maps_obj = maps_arr[map_inc].as_object();
-                model::Map map(model::Map::Id(std::string(maps_obj.at(ID).as_string())), std::string(maps_obj.at(NAME).as_string()));
+                model::Map map(model::Map::Id(std::string(maps_obj.at(ID).as_string().data())), std::string(maps_obj.at(NAME).as_string().data()));
 
                 const auto& roads_arr = maps_obj.at(ROADS).as_array();
                 ParseRoads(map, roads_arr);

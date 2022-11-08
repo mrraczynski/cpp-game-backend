@@ -17,6 +17,8 @@ namespace fs = std::filesystem;
 using StringResponse = http::response<http::string_body>;
 using FileResponse = http::response<http::file_body>;
 using StringRequest = http::request<http::string_body>;
+template<typename ResponseType>
+using Response = http::response<ResponseType>;
 
 // Структура ContentType задаёт область видимости для констант,
 // задающий значения HTTP-заголовка Content-Type
@@ -46,11 +48,13 @@ public:
         : game_{ game }, static_dir_{static_dir} {
     }
 
-    RequestHandler(const RequestHandler&) = delete;
+    //RequestHandler(const RequestHandler&) = delete;
     RequestHandler& operator=(const RequestHandler&) = delete;
 
     template <typename Body, typename Allocator, typename Send>
     void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
+    //template <typename Body, typename Allocator, typename Send, typename ResponseType>
+    //Response<ResponseType> operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
         // Обработать запрос request и отправить ответ, используя send
         try
         {
@@ -62,20 +66,23 @@ public:
                 return;
             }
             else if (!IsApiRequest(target_vec))
-            {              
+            {           
+                //Response<ResponseType> resp = HandleStaticFileRequest(std::move(req), std::move(send), decoded_path);
+                //return resp;
                 HandleStaticFileRequest(std::move(req), std::move(send), decoded_path);
                 return;
             }
             else
             {
+                //Response<ResponseType> resp = HandleAPIRequest(std::move(req), std::move(send), target_vec);
+                //return resp;
                 HandleAPIRequest(std::move(req), std::move(send), target_vec);
-                return;
             }
         }
         catch (std::exception& e)
         {
             std::cout << "request_handler.h/operator(): " << e.what() << std::endl;
-            return;
+            //return nullptr;
         }
     }
 
@@ -131,34 +138,51 @@ private:
     }
 
     template <typename Body, typename Allocator, typename Send>
+    //StringResponse HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
     void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
     {
         if (!IsGoodRequest(target_vec))
         {
+            /*StringResponse resp = ResponseError(req, ContentType::APPLICATION_JSON, http::status::bad_request, "badRequest", "Bad request");
+            send(StringResponse(resp));
+            return resp;*/
             send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::bad_request, "badRequest", "Bad request"));
-            return;
         }
         else
         {
             if (!HasMapID(target_vec))
             {
+                /*StringResponse resp = ResponseAllMaps(req);
+                send(StringResponse(resp));
+                return resp;*/
                 send(ResponseAllMaps(req));
+                return;
             }
             else
             {
                 const model::Map* map = game_.FindMap(model::Map::Id(std::string(target_vec[4])));
                 if (map != nullptr)
                 {
+                    /*StringResponse resp = ResponseMapById(req, map);
+                    send(StringResponse(resp));
+                    return resp;*/
                     send(ResponseMapById(req, map));
+                    return;
                 }
                 else
                 {
+                    /*StringResponse resp = ResponseError(req, ContentType::APPLICATION_JSON, http::status::not_found, "mapNotFound", "Map not found");
+                    send(StringResponse(resp));
+                    return resp;*/
                     send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::not_found, "mapNotFound", "Map not found"));
+                    return;
                 }
             }
         }
     }
 
+    //template <typename Body, typename Allocator, typename Send, typename ResponseType>
+    //Response<ResponseType> HandleStaticFileRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::string& decoded_path)
     template <typename Body, typename Allocator, typename Send>
     void HandleStaticFileRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::string& decoded_path)
     {
@@ -175,16 +199,28 @@ private:
             http::file_body::value_type file;
             if (sys::error_code ec; file.open(absolute_path.string().data(), beast::file_mode::read, ec), ec)
             {
+                /*StringResponse resp = ResponseError(req, ContentType::TEXT_PLAIN, http::status::not_found, "fileNotFound", "File not found");
+                send(StringResponce(resp));
+                return resp;*/
                 send(ResponseError(req, ContentType::TEXT_PLAIN, http::status::not_found, "fileNotFound", "File not found"));
+                return;
             }
             else
             {
+                /*FileResponse resp = ResponseFile(req, file, content_type.second);
+                send(FileResponse(resp));
+                return resp;*/
                 send(ResponseFile(req, file, content_type.second));
+                return;
             }
         }
         else
         {
+            /*StringResponse resp = ResponseError(req, ContentType::TEXT_PLAIN, http::status::bad_request, "badRequest", "Bad request");
+            send(StringResponse(resp));
+            return resp;*/
             send(ResponseError(req, ContentType::TEXT_PLAIN, http::status::bad_request, "badRequest", "Bad request"));
+            return;
         }
     }
 
@@ -205,6 +241,40 @@ private:
     model::Game& game_;
 
     fs::path static_dir_;
+};
+
+template<class SomeRequestHandler>
+class LoggingRequestHandler {
+    template <typename Body, typename Allocator>
+    void LogRequest(const http::request<Body, http::basic_fields<Allocator>>& req)
+    {
+
+    }
+    template <typename Body, typename Fields>
+    void LogResponse(const http::response<Body, Fields>& resp)
+    {
+
+    }
+public:
+
+    LoggingRequestHandler(const LoggingRequestHandler&) = delete;
+    LoggingRequestHandler& operator=(const LoggingRequestHandler&) = delete;
+
+    explicit LoggingRequestHandler(SomeRequestHandler&& handler)
+        : decorated_{ std::forward<SomeRequestHandler> (handler) } {};
+
+
+    template <typename Body, typename Allocator, typename Send, typename ResponseBody>
+    void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send)
+    {
+        LogRequest(req);
+        //Response<ResponseBody> resp = decorated_(std::move(req));
+        //LogResponse(resp);
+        //return resp;
+    }
+
+private:
+    SomeRequestHandler decorated_;
 };
 
 }  // namespace http_handler

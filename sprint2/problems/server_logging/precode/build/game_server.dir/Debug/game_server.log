@@ -1,0 +1,6 @@
+﻿  http_server.cpp
+  main.cpp
+  request_handler.cpp
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\server_logging\precode\src\request_handler.cpp(107,9): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  Создание кода...
+  game_server.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\server_logging\precode\build\bin\game_server.exe
