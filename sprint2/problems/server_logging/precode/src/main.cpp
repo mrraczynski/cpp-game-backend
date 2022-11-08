@@ -38,7 +38,7 @@ int main(int argc, const char* argv[]) {
         logger::InitBoostLog();
 
         // 1. Загружаем карту из файла и построить модель игры
-        model::Game game = json_loader::LoadGame(argv[1]);
+        model::Game game = json_loader::LoadGame(/*"E:/Projects/GitHub/cpp-game-backend/sprint2/problems/server_logging/precode/data/config.json"*/ argv[1]);
 
         // 2. Инициализируем io_context
         const unsigned num_threads = std::thread::hardware_concurrency();
@@ -49,16 +49,17 @@ int main(int argc, const char* argv[]) {
         signals.async_wait([&ioc](const sys::error_code& ec, [[maybe_unused]] int signal_number) {
             if (!ec) {
                 //std::cout << "Signal "sv << signal_number << " received"sv << std::endl;
-                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value{ 
-                    {"code", 0},
-                    logger::LoggerData::GetDataJson("exception", std::string()) }) 
-                    << "server exited"sv;
+                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                    {
+                        {"code", 0},
+                        {"exception", nullptr}
+                    })) << "server exited"sv;
                 ioc.stop();
             }
             });
 
         // 4. Создаём обработчик HTTP-запросов и связываем его с моделью игры
-        http_handler::RequestHandler handler{game, argv[2]};
+        http_handler::RequestHandler handler{ game, /*"E:/Projects/GitHub/cpp-game-backend/sprint2/problems/server_logging/precode/static/"*/ argv[2] };
 
         //http_handler::LoggingRequestHandler logging_handler{ std::forward<http_handler::RequestHandler>(handler) };
 
@@ -73,10 +74,11 @@ int main(int argc, const char* argv[]) {
 
         // Эта надпись сообщает тестам о том, что сервер запущен и готов обрабатывать запросы
         //std::cout << "Server has started..."sv << std::endl;
-        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data,
-            logger::LoggerData::GetDataJson("port", std::to_string(port),
-                "address", address.to_string()))
-            << "Server has started..."sv;
+        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+            {
+                {"port", port},
+                {"address", address.to_string()}
+            })) << "Server has started...";
 
         // 6. Запускаем обработку асинхронных операций
         RunWorkers(std::max(1u, num_threads), [&ioc] {
@@ -84,10 +86,11 @@ int main(int argc, const char* argv[]) {
         });
     } catch (const std::exception& ex) {
         //std::cerr << ex.what() << std::endl;
-        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data,
-            logger::LoggerData::GetDataJson("code", "EXIT_FAILURE",
-                "exception", ex.what()))
-            << "server exited"sv;
+        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+            {
+                {"code", "EXIT_FAILURE"},
+                {"exception", ex.what()}
+            })) << "server exited"sv;
         return EXIT_FAILURE;
     }
 }
