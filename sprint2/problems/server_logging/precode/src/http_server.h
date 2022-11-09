@@ -44,12 +44,14 @@ namespace http_server {
                 [safe_response, self](beast::error_code ec, std::size_t bytes_written) {
                     self->OnWrite(safe_response->need_eof(), ec, bytes_written);
                 });
+            end = chrono::steady_clock::now();
             auto dur = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
-            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data,
-                logger::LoggerData::GetDataJson("response_time", std::to_string(dur),
-                    "URI", std::to_string(safe_response->result_int()),
-                    "method", std::string((*safe_response)["Content-Type"])))
-                << "response sent"sv;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"response_time", dur},
+                    {"code", safe_response->result_int()},
+                    {"content_type", (*safe_response)["Content-Type"]}
+                })) << "response sent"sv;
         }
 
         // Обработку запроса делегируем подклассу

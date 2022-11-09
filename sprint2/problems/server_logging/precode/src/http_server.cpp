@@ -19,11 +19,6 @@ namespace http_server {
             // По окончании операции будет вызван метод OnRead
             beast::bind_front_handler(&SessionBase::OnRead, GetSharedThis()));
         begin = chrono::steady_clock::now();
-        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, 
-            logger::LoggerData::GetDataJson("ip", stream_.socket().remote_endpoint().address().to_string(), 
-                "URI", std::string(request_.target()),
-                "method", std::string(request_.method_string())))
-            << "request received"sv;
     }
 
     void SessionBase::OnRead(beast::error_code ec, [[maybe_unused]] std::size_t bytes_read) {
@@ -42,6 +37,12 @@ namespace http_server {
                 })) << "error"sv;
             return;
         }
+        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+            {
+                {"ip", stream_.socket().remote_endpoint().address().to_string()},
+                {"URI", request_.target()},
+                {"method", request_.method_string()}
+            })) << "request received"sv;
         HandleRequest(std::move(request_));
     }
 
