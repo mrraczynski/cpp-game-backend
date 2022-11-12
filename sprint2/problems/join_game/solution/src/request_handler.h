@@ -215,7 +215,7 @@ private:
         }
 
         std::string_view bearer_token = req["Authorization"];
-        if (bearer_token.size() == 0)
+        if (bearer_token.size() < 8)
         {
             std::string body_str;
             json_loader::GetErrorJson(body_str, "invalidToken", "Authorization header is missing");
