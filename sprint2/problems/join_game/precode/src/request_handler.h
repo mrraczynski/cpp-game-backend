@@ -168,9 +168,15 @@ private:
             return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET, HEAD");
         }
         json::value body_json;
+        json::object obj;
+        std::string user_name;
+        std::string map_id;
         try
         {
             body_json = json::parse(req.body());
+            obj = body_json.as_object();
+            user_name = obj["userName"].as_string().data();
+            map_id = obj["mapId"].as_string().data();
         }
         catch (std::exception& e)
         {
@@ -178,9 +184,6 @@ private:
             json_loader::GetErrorJson(body_str, "invalidArgument", "Join game request parse error");
             return ResponsePostRequest(req, body_str, http::status::bad_request, ContentType::APPLICATION_JSON, "no-cache"sv);
         }
-        json::object obj = body_json.as_object();
-        std::string user_name = obj["userName"].as_string().data();
-        std::string map_id = obj["mapId"].as_string().data();
         if (user_name.size() == 0)
         {
             std::string body_str;
