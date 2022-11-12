@@ -61,12 +61,7 @@ public:
         {
             std::string decoded_path = UrlDecode(req.target());
             std::vector<std::string_view> target_vec = SplitRequest(decoded_path);
-            if (req.method() != http::verb::get && req.method() != http::verb::post)
-            {
-                send(ResponseNotAllowed(req));
-                return;
-            }
-            else if (!IsApiRequest(target_vec))
+            if (!IsApiRequest(target_vec))
             {           
                 //Response<ResponseType> resp = HandleStaticFileRequest(std::move(req), std::move(send), decoded_path);
                 //return resp;
@@ -241,27 +236,20 @@ private:
         return ResponsePostRequest(req, body_str, http::status::ok, ContentType::APPLICATION_JSON, "no-cache"sv);
     }
 
-    template <typename Body, typename Allocator, typename Send>
+    template <typename Body, typename Allocator>
     //StringResponse HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
-    void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
+    StringResponse HandleMapsRequest(http::request<Body, http::basic_fields<Allocator>>& req, const std::vector<std::string_view>& target_vec)
     {
+        if (req.method() != http::verb::get)
+        {
+            return ResponseNotAllowed(req);
+        }
         if (!IsMapsRequest(target_vec))
         {
             /*StringResponse resp = ResponseError(req, ContentType::APPLICATION_JSON, http::status::bad_request, "badRequest", "Bad request");
             send(StringResponse(resp));
             return resp;*/
-            if (IsGameJoinRequest(target_vec))
-            {
-                send(HandleJoinGameRequest(req));
-                return;
-            }
-            else if (IsGamePlayersRequest(target_vec))
-            {
-                send(HandlePlayersRequest(req));
-                return;
-            }
-            send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::bad_request, "badRequest", "Bad request"));
-            return;
+            return ResponseError(req, ContentType::APPLICATION_JSON, http::status::bad_request, "badRequest", "Bad request");
         }
         else
         {
@@ -270,8 +258,7 @@ private:
                 /*StringResponse resp = ResponseAllMaps(req);
                 send(StringResponse(resp));
                 return resp;*/
-                send(ResponseAllMaps(req));
-                return;
+                return ResponseAllMaps(req);
             }
             else
             {
@@ -281,18 +268,37 @@ private:
                     /*StringResponse resp = ResponseMapById(req, map);
                     send(StringResponse(resp));
                     return resp;*/
-                    send(ResponseMapById(req, map));
-                    return;
+                    return ResponseMapById(req, map);
                 }
                 else
                 {
                     /*StringResponse resp = ResponseError(req, ContentType::APPLICATION_JSON, http::status::not_found, "mapNotFound", "Map not found");
                     send(StringResponse(resp));
                     return resp;*/
-                    send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::not_found, "mapNotFound", "Map not found"));
-                    return;
+                    return ResponseError(req, ContentType::APPLICATION_JSON, http::status::not_found, "mapNotFound", "Map not found");
                 }
             }
+        }
+    }
+
+    template <typename Body, typename Allocator, typename Send>
+    //StringResponse HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
+    void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
+    {
+        if (IsGameJoinRequest(target_vec))
+        {
+            send(HandleJoinGameRequest(req));
+            return;
+        }
+        else if (IsGamePlayersRequest(target_vec))
+        {
+            send(HandlePlayersRequest(req));
+            return;
+        }
+        else
+        {
+            send(HandleMapsRequest(req, target_vec));
+            return;
         }
     }
 
@@ -301,6 +307,11 @@ private:
     template <typename Body, typename Allocator, typename Send>
     void HandleStaticFileRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::string& decoded_path)
     {
+        if (req.method() != http::verb::get)
+        {
+            send(ResponseNotAllowed(req));
+            return;
+        }
         fs::path absolute_path(static_dir_ / decoded_path.substr(1));
         if (IsSubPath(absolute_path, static_dir_))
         {
