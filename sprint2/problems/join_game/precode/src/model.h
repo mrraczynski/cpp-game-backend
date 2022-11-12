@@ -308,7 +308,9 @@ private:
     {
         std::ostringstream ss;
         ss << std::hex << generator1_() << generator2_();
-        Token token(ss.str());
+        std::string ss_str = ss.str();
+        ss_str.resize(32, '0');
+        Token token(ss_str);
         return token;
     }
 
