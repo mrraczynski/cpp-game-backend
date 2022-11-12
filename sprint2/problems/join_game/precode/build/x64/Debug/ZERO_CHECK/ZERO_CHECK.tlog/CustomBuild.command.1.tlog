@@ -1,0 +1,10 @@
+^E:\PROJECTS\GITHUB\CPP-GAME-BACKEND\SPRINT2\PROBLEMS\JOIN_GAME\PRECODE\BUILD\CMAKEFILES\FE918B8A8830A2B30AECC78C7E361DB3\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SE:/Projects/GitHub/cpp-game-backend/sprint2/problems/join_game/precode -BE:/Projects/GitHub/cpp-game-backend/sprint2/problems/join_game/precode/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/Projects/GitHub/cpp-game-backend/sprint2/problems/join_game/precode/build/game_server.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
