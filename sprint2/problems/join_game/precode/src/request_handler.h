@@ -207,11 +207,11 @@ private:
     template <typename Body, typename Allocator>
     StringResponse HandlePlayersRequest(const http::request<Body, http::basic_fields<Allocator>>& req)
     {
-        if (req.method() != http::verb::get)
+        if (req.method() != http::verb::get && req.method() != http::verb::head)
         {
             std::string body_str;
             json_loader::GetErrorJson(body_str, "invalidMethod", "Invalid method");
-            return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv);
+            return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET, HEAD");
         }
 
         std::string_view bearer_token = req["Authorization"];
@@ -242,7 +242,9 @@ private:
     {
         if (req.method() != http::verb::get)
         {
-            return ResponseNotAllowed(req);
+            std::string body_str;
+            json_loader::GetErrorJson(body_str, "invalidMethod", "Invalid method");
+            return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET");
         }
         if (!IsMapsRequest(target_vec))
         {
