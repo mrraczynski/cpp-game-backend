@@ -36,7 +36,6 @@ public:
         }
         catch (std::exception& e)
         {
-            std::string body_str;
             send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", e.what()));
         }
     }
