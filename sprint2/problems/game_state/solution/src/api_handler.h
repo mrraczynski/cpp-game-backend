@@ -205,14 +205,14 @@ namespace http_handler {
             }
             std::string token = std::string(bearer_token.substr(7, bearer_token.size()));
             int ec;
-            model::Player& player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(token), ec);
+            const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(token), ec);
             if (ec != 0)
             {
                 std::string body_str;
                 json_loader::GetErrorJson(body_str, "unknownToken", "Player token has not been found");
                 return ResponsePostRequest(req, body_str, http::status::unauthorized, ContentType::APPLICATION_JSON, "no-cache"sv);
             }
-            std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player.GetSession());
+            std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player->GetSession());
 
             std::string body_str = json_loader::CreatePlayersArray(session_players);
             return ResponsePostRequest(req, body_str, http::status::ok, ContentType::APPLICATION_JSON, "no-cache"sv);

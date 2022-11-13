@@ -55,7 +55,7 @@ void Game::AddGameSession(GameSession session) {
 std::string Game::GetCurrentGameState(const std::string_view& token, std::string& error_code)
 {
     int player_ec;
-    model::Player& player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)), player_ec);
+    const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)), player_ec);
     if (player_ec != 0)
     {
         std::string body_str;
@@ -63,7 +63,7 @@ std::string Game::GetCurrentGameState(const std::string_view& token, std::string
         return body_str;
     }
     std::string body_str;
-    std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player.GetSession());
+    std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player->GetSession());
     return json_loader::CreatePlayersWithParametersArray(session_players);
 }
 

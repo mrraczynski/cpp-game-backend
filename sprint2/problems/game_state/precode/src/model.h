@@ -285,7 +285,7 @@ public:
         dog_.SetPosition(session_->GetMap().GetRandomPointOnRoad());
     }
 
-    const GameSession* GetSession()
+    const GameSession* GetSession() const
     {
         return session_;
     }
@@ -328,17 +328,14 @@ public:
         return token;
     }
 
-    Player& FindPlayerByToken(const Token& token, int& ec)
+    const Player* FindPlayerByToken(const Token& token, int& ec)
     {
         if (players_.find(*token) != players_.end())
         {
             ec = 0;
-            return players_.at(*token);
+            return &players_.at(*token);
         }     
-        else
-        {
-            ec = -1;
-        }
+        return nullptr;
     }
 
     std::vector<Player> GetPlayersBySession(const GameSession* session)
