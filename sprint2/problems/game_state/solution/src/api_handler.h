@@ -82,7 +82,7 @@ namespace http_handler {
             catch (std::exception& e)
             {
                 std::string body_str;
-                send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::unauthorized, e.what(), e.what()));
+                send(ResponsePostRequest(req, body_str, http::status::unauthorized, ContentType::APPLICATION_JSON, e.what()));
             }
         }
 
