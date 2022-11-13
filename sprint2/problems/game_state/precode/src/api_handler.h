@@ -82,6 +82,7 @@ namespace http_handler {
             catch (std::exception& e)
             {
                 std::string body_str;
+                json_loader::GetErrorJson(body_str, e.what(), e.what());
                 send(ResponsePostRequest(req, body_str, http::status::unauthorized, ContentType::APPLICATION_JSON, e.what()));
             }
         }
