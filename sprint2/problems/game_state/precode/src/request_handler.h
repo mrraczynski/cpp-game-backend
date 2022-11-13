@@ -28,14 +28,16 @@ public:
             {   
                 std::shared_ptr<ApiHandler> api_handler = api_handler_;
                 // Все запросы к API выполняются последовательно внутри strand
-                return net::dispatch(strand_, [&api_handler, &req,  &send, &target_vec] {
+                return net::dispatch(strand_, [&api_handler, &req, &send, &target_vec] {
                     api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec);
                     });
+
             }
         }
         catch (std::exception& e)
         {
-            std::cout << "request_handler.h/operator(): " << e.what() << std::endl;
+            std::string body_str;
+            send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", e.what()));
         }
     }
 
