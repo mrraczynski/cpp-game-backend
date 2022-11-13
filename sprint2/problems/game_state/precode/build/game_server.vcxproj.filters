@@ -22,7 +22,7 @@
     <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\api_handler.cpp">
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\api_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,7 +48,7 @@
     <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\api_handler.h">
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\api_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

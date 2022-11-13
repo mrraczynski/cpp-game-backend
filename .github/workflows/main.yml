@@ -33,17 +33,6 @@ jobs:
         run: |
           cp -R /home/forconan/.conan /github/home/.conan
 
-      - name: build tests sprint2 game_state
-        run: |
-          cd sprint2/problems/game_state/solution
-          docker build -t game_state .
-          echo "COMMAND_RUN=docker run --rm --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 game_state" >> $GITHUB_ENV
-
-      - name: run tests sprint2 game_state
-        run: pytest --junitxml=game_state.xml cpp-backend-tests-practicum/tests/test_s02_game_state.py
-        env:
-          SERVER_DOMAIN: cppserver
-
       - name: build tests sprint2 move_players
         run: |
           cd sprint2/problems/move_players/solution

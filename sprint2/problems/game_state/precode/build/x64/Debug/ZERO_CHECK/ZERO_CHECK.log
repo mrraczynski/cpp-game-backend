@@ -1,0 +1,55 @@
+﻿  Checking Build System
+  CMake is re-running because E:/Projects/GitHub/cpp-game-backend/sprint2/problems/game_state/precode/build/CMakeFiles/generate.stamp is out-of-date.
+    the file 'E:/Projects/GitHub/cpp-game-backend/sprint2/problems/game_state/precode/CMakeLists.txt'
+    is newer than 'E:/Projects/GitHub/cpp-game-backend/sprint2/problems/game_state/precode/build/CMakeFiles/generate.stamp.depend'
+    result='-1'
+  -- Selecting Windows SDK version 10.0.19041.0 to target Windows 10.0.22000.
+  -- Conan: Adjusting output directories
+  -- Conan: Using cmake targets configuration
+  -- Library libboost_contract found C:/.conan/621dd6/1/lib/libboost_contract.lib
+  -- Library libboost_coroutine found C:/.conan/621dd6/1/lib/libboost_coroutine.lib
+  -- Library libboost_fiber_numa found C:/.conan/621dd6/1/lib/libboost_fiber_numa.lib
+  -- Library libboost_fiber found C:/.conan/621dd6/1/lib/libboost_fiber.lib
+  -- Library libboost_context found C:/.conan/621dd6/1/lib/libboost_context.lib
+  -- Library libboost_graph found C:/.conan/621dd6/1/lib/libboost_graph.lib
+  -- Library libboost_iostreams found C:/.conan/621dd6/1/lib/libboost_iostreams.lib
+  -- Library libboost_json found C:/.conan/621dd6/1/lib/libboost_json.lib
+  -- Library libboost_log_setup found C:/.conan/621dd6/1/lib/libboost_log_setup.lib
+  -- Library libboost_log found C:/.conan/621dd6/1/lib/libboost_log.lib
+  -- Library libboost_locale found C:/.conan/621dd6/1/lib/libboost_locale.lib
+  -- Library libboost_math_c99 found C:/.conan/621dd6/1/lib/libboost_math_c99.lib
+  -- Library libboost_math_c99f found C:/.conan/621dd6/1/lib/libboost_math_c99f.lib
+  -- Library libboost_math_c99l found C:/.conan/621dd6/1/lib/libboost_math_c99l.lib
+  -- Library libboost_math_tr1 found C:/.conan/621dd6/1/lib/libboost_math_tr1.lib
+  -- Library libboost_math_tr1f found C:/.conan/621dd6/1/lib/libboost_math_tr1f.lib
+  -- Library libboost_math_tr1l found C:/.conan/621dd6/1/lib/libboost_math_tr1l.lib
+  -- Library libboost_nowide found C:/.conan/621dd6/1/lib/libboost_nowide.lib
+  -- Library libboost_program_options found C:/.conan/621dd6/1/lib/libboost_program_options.lib
+  -- Library libboost_random found C:/.conan/621dd6/1/lib/libboost_random.lib
+  -- Library libboost_regex found C:/.conan/621dd6/1/lib/libboost_regex.lib
+  -- Library libboost_stacktrace_noop found C:/.conan/621dd6/1/lib/libboost_stacktrace_noop.lib
+  -- Library libboost_stacktrace_windbg found C:/.conan/621dd6/1/lib/libboost_stacktrace_windbg.lib
+  -- Library libboost_stacktrace_windbg_cached found C:/.conan/621dd6/1/lib/libboost_stacktrace_windbg_cached.lib
+  -- Library libboost_timer found C:/.conan/621dd6/1/lib/libboost_timer.lib
+  -- Library libboost_type_erasure found C:/.conan/621dd6/1/lib/libboost_type_erasure.lib
+  -- Library libboost_thread found C:/.conan/621dd6/1/lib/libboost_thread.lib
+  -- Library libboost_atomic found C:/.conan/621dd6/1/lib/libboost_atomic.lib
+  -- Library libboost_chrono found C:/.conan/621dd6/1/lib/libboost_chrono.lib
+  -- Library libboost_container found C:/.conan/621dd6/1/lib/libboost_container.lib
+  -- Library libboost_date_time found C:/.conan/621dd6/1/lib/libboost_date_time.lib
+  -- Library libboost_unit_test_framework found C:/.conan/621dd6/1/lib/libboost_unit_test_framework.lib
+  -- Library libboost_prg_exec_monitor found C:/.conan/621dd6/1/lib/libboost_prg_exec_monitor.lib
+  -- Library libboost_test_exec_monitor found C:/.conan/621dd6/1/lib/libboost_test_exec_monitor.lib
+  -- Library libboost_exception found C:/.conan/621dd6/1/lib/libboost_exception.lib
+  -- Library libboost_wave found C:/.conan/621dd6/1/lib/libboost_wave.lib
+  -- Library libboost_filesystem found C:/.conan/621dd6/1/lib/libboost_filesystem.lib
+  -- Library libboost_wserialization found C:/.conan/621dd6/1/lib/libboost_wserialization.lib
+  -- Library libboost_serialization found C:/.conan/621dd6/1/lib/libboost_serialization.lib
+  -- Library zlib found C:/Users/mrrac/.conan/data/zlib/1.2.13/_/_/package/164640aad040835ac89882393a96d89200694f04/lib/zlib.lib
+  -- Library bz2 found C:/Users/mrrac/.conan/data/bzip2/1.0.8/_/_/package/d74f69022acf854c1ce6f27efa07ccbb6504e4b1/lib/bz2.lib
+  -- Conan: Adjusting default RPATHs Conan policies
+  -- Conan: Adjusting language standard
+  -- Current conanbuildinfo.cmake directory: E:/Projects/GitHub/cpp-game-backend/sprint2/problems/game_state/precode/build
+  -- Configuring done
+  -- Generating done
+  -- Build files have been written to: E:/Projects/GitHub/cpp-game-backend/sprint2/problems/game_state/precode/build

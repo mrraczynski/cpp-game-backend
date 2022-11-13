@@ -4,19 +4,13 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\mode
           [
               _Ty=int
           ]
-  json_loader.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
   main.cpp
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
           with
           [
               _Ty=int
           ]
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\api_handler.h(151,36): warning C4101: e: неиспользованная локальная переменная
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\api_handler.h(160,36): warning C4101: e: неиспользованная локальная переменная
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\api_handler.h(59): message : выполняется компиляция ссылки на экземпляр шаблон функции "http_handler::StringResponse http_handler::ApiHandler::HandleJoinGameRequest<boost::beast::http::string_body,std::allocator<char>>(const boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &)"
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\request_handler.h(16): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_handler::ApiHandler::HandleAPIRequest<boost::beast::http::string_body,std::allocator<char>,http_server::Session<RequestHandler>::HandleRequest::<lambda_1>>(boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &&,Send &&,const std::vector<std::string_view,std::allocator<std::string_view>> &)"
           with
@@ -55,12 +49,6 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\main
           [
               RequestHandler=main::<lambda_2>
           ]
-  model.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
   request_handler.cpp
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
           with
@@ -69,6 +57,4 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\mode
           ]
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\request_handler.cpp(78,9): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
   Создание кода...
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(342): warning C4715: model::PlayerTokens::FindPlayerByToken: значение возвращается не при всех путях выполнения
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(342): warning C4715: model::PlayerTokens::FindPlayerByToken: значение возвращается не при всех путях выполнения
   game_server.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\build\bin\game_server.exe
