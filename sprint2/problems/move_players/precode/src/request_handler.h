@@ -91,7 +91,7 @@ private:
             http::file_body::value_type file;
             if (sys::error_code ec; file.open(absolute_path.string().data(), beast::file_mode::read, ec), ec)
             {
-                send(ResponseError(req, ContentType::TEXT_HTML, http::status::not_found, "fileNotFound", "File not found"));
+                send(ResponseError(req, ContentType::TEXT_PLAIN, http::status::not_found, "fileNotFound", "File not found"));
                 return;
             }
             else
