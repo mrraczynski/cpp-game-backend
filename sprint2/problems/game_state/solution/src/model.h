@@ -251,13 +251,13 @@ class GameSession {
 public:
     using Id = util::Tagged<std::string, GameSession>;
 
-    GameSession(Id id, Map& map) noexcept
-        : map_{ map }
+    GameSession(Id id, Map::Id map_id) noexcept
+        : map_id_{ map_id }
         , id_(std::move(id)) {
     }
 
-    Map& GetMap() const noexcept {
-        return map_;
+    Map::Id GetMapId() const noexcept {
+        return map_id_;
     }
 
     GameSession* GetThisGameSession()
@@ -270,19 +270,19 @@ public:
     }
 
 private:
-    Map& map_;
+    Map::Id map_id_;
     Id id_;
 };
 
 class Player {
 public:
 
-    Player(int id, const std::string& name, const GameSession* session) noexcept
+    Player(int id, const std::string& name, Vector2 dog_pos, const GameSession* session) noexcept
         : id_{ id }
         , name_{ name }
         , session_{ session }
     { 
-        dog_.SetPosition(session_->GetMap().GetRandomPointOnRoad());
+        dog_.SetPosition(dog_pos);
     }
 
     const GameSession* GetSession() const
@@ -396,7 +396,7 @@ public:
         return ++player_id_;
     }
 
-    Map& AddMap(Map map);
+    void AddMap(Map map);
 
     void AddGameSession(GameSession session);
 
@@ -422,11 +422,15 @@ public:
         return nullptr;
     }
 
-    const GameSession* FindGameSessionByMap(const Map::Id& id) noexcept {
-        for (auto& session : sessions_) {
-            if (session.GetMap().GetId() == id)
+    const GameSession* FindGameSessionByMap(Map::Id id) noexcept {
+        for (auto& session : sessions_)
+        {
+            if (session.GetMapId() == id)
             {
-                return &session;
+                if (auto it = session_id_to_index_.find(session.GetId()); it != session_id_to_index_.end())
+                {
+                    return &sessions_.at(it->second);
+                }
             }
         }
         return nullptr;

@@ -279,11 +279,11 @@ namespace json_loader {
                 const auto& offices_arr = maps_obj.at(OFFICES).as_array();
                 ParseOffices(map, offices_arr);
 
-                model::Map& map_ref = game.AddMap(map);
-
                 //TODO: определить логику создания сессий в другой части системы
-                model::GameSession session(model::GameSession::Id(std::string(maps_obj.at(ID).as_string().data())), map_ref);
+                model::GameSession session(model::GameSession::Id(std::string(maps_obj.at(ID).as_string().data())), map.GetId());
                 game.AddGameSession(session);
+
+                game.AddMap(map);
             }
         }
         catch (std::exception& e)

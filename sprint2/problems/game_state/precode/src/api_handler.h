@@ -178,7 +178,8 @@ namespace http_handler {
             {
                 int id = game_.GetPlayerId();
                 //TODO: изменить логику определения сессии
-                model::Player player(id, user_name, game_.FindGameSessionByMap(model::Map::Id(map_id)));
+
+                model::Player player(id, user_name, game_.FindMap(model::Map::Id(map_id))->GetRandomPointOnRoad(), game_.FindGameSessionByMap(model::Map::Id(map_id)));
                 model::Token token = model::PlayerTokens::GetInstance().AddPlayer(player);
                 std::string body_str;
                 json_loader::GetAuthInfo(body_str, *token, id);

@@ -22,13 +22,13 @@ void Map::AddOffice(Office office) {
     }
 }
 
-Map& Game::AddMap(Map map) {
+Game::AddMap(Map map) {
     const size_t index = maps_.size();
     if (auto [it, inserted] = map_id_to_index_.emplace(map.GetId(), index); !inserted) {
         throw std::invalid_argument("Map with id "s + *map.GetId() + " already exists"s);
     } else {
         try {
-            return maps_.emplace_back(std::move(map));
+            maps_.emplace_back(std::move(map));
         } catch (...) {
             map_id_to_index_.erase(it);
             throw;
