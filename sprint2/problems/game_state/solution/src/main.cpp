@@ -30,10 +30,10 @@ void RunWorkers(unsigned n, const Fn& fn) {
 }  // namespace
 
 int main(int argc, const char* argv[]) {
-    /*if (argc != 3) {
+    if (argc != 3) {
         std::cerr << "Usage: game_server <game-config-json> <files-folder-path>"sv << std::endl;
         return EXIT_FAILURE;
-    }*/
+    }
     try {
         logger::InitBoostLog();
 

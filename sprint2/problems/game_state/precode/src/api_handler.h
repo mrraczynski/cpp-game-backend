@@ -172,7 +172,6 @@ namespace http_handler {
                 //TODO: изменить логику определения сессии
                 model::Player player(id, user_name, game_.FindGameSessionByMap(model::Map::Id(map_id)));
                 model::Token token = model::PlayerTokens::GetInstance().AddPlayer(player);
-                //auto x = model::PlayerTokens::GetInstance().players_;
                 std::string body_str;
                 json_loader::GetAuthInfo(body_str, *token, id);
                 return ResponsePostRequest(req, body_str, http::status::ok, ContentType::APPLICATION_JSON, "no-cache"sv);
