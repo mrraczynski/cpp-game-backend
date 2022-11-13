@@ -57,25 +57,32 @@ namespace http_handler {
         //StringResponse HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
         void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
         {
-            if (IsGameJoinRequest(target_vec))
-            {
-                send(HandleJoinGameRequest(req));
-                return;
+            try {
+                if (IsGameJoinRequest(target_vec))
+                {
+                    send(HandleJoinGameRequest(req));
+                    return;
+                }
+                else if (IsGamePlayersRequest(target_vec))
+                {
+                    send(HandlePlayersRequest(req));
+                    return;
+                }
+                else if (IsGameStateRequest(target_vec))
+                {
+                    send(HandleStateRequest(req));
+                    return;
+                }
+                else
+                {
+                    send(HandleMapsRequest(req, target_vec));
+                    return;
+                }
             }
-            else if (IsGamePlayersRequest(target_vec))
+            catch (std::exception& e)
             {
-                send(HandlePlayersRequest(req));
-                return;
-            }
-            else if (IsGameStateRequest(target_vec))
-            {
-                send(HandleStateRequest(req));
-                return;
-            }
-            else
-            {
-                send(HandleMapsRequest(req, target_vec));
-                return;
+                std::string body_str;
+                send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", e.what()));
             }
         }
 
