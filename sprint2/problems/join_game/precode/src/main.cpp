@@ -30,15 +30,15 @@ void RunWorkers(unsigned n, const Fn& fn) {
 }  // namespace
 
 int main(int argc, const char* argv[]) {
-    if (argc != 3) {
+    /*if (argc != 3) {
         std::cerr << "Usage: game_server <game-config-json> <files-folder-path>"sv << std::endl;
         return EXIT_FAILURE;
-    }
+    }*/
     try {
         logger::InitBoostLog();
 
         // 1. Загружаем карту из файла и построить модель игры
-        model::Game game = json_loader::LoadGame(/*"E:/Projects/GitHub/cpp-game-backend/sprint2/problems/join_game/precode/data/config.json"*/argv[1] );
+        model::Game game = json_loader::LoadGame("E:/Projects/GitHub/cpp-game-backend/sprint2/problems/join_game/precode/data/config.json"/*argv[1]*/ );
 
         // 2. Инициализируем io_context
         const unsigned num_threads = std::thread::hardware_concurrency();
@@ -60,7 +60,7 @@ int main(int argc, const char* argv[]) {
 
         // 4. Создаём обработчик HTTP-запросов и связываем его с моделью игры
         std::shared_ptr<http_handler::RequestHandler> handler = std::make_shared<http_handler::RequestHandler>(game, 
-            /*"E:/Projects/GitHub/cpp-game-backend/sprint2/problems/join_game/precode/static/"*/ argv[2], 
+            "E:/Projects/GitHub/cpp-game-backend/sprint2/problems/join_game/precode/static/" /*argv[2]*/, 
             ioc);
         //http_handler::LoggingRequestHandler logging_handler{ std::forward<http_handler::RequestHandler>(handler) };
 

@@ -1,13 +1,13 @@
 ﻿  main.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\request_handler.h(175,32): warning C4101: e: неиспользованная локальная переменная
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\request_handler.h(244): message : выполняется компиляция ссылки на экземпляр шаблон функции "http_handler::StringResponse http_handler::RequestHandler::HandleJoinGameRequest<boost::beast::http::string_body,std::allocator<char>>(const boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &)"
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\request_handler.h(176,32): warning C4101: e: неиспользованная локальная переменная
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\request_handler.h(289): message : выполняется компиляция ссылки на экземпляр шаблон функции "http_handler::StringResponse http_handler::RequestHandler::HandleJoinGameRequest<boost::beast::http::string_body,std::allocator<char>>(const boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &)"
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\request_handler.h(56): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_handler::RequestHandler::HandleAPIRequest<boost::beast::http::string_body,std::allocator<char>,http_server::Session<RequestHandler>::HandleRequest::<lambda_1>>(boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &&,Send &&,const std::vector<std::string_view,std::allocator<std::string_view>> &)"
           with
           [
               RequestHandler=main::<lambda_2>,
               Send=http_server::Session<main::<lambda_2>>::HandleRequest::<lambda_1>
           ]
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\main.cpp(74): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_handler::RequestHandler::operator ()<boost::beast::http::string_body,std::allocator<char>,_T2>(boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &&,Send &&)"
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\main.cpp(73): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_handler::RequestHandler::operator ()<boost::beast::http::string_body,std::allocator<char>,_T2>(boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &&,Send &&)"
           with
           [
               _T2=http_server::Session<main::<lambda_2>>::HandleRequest::<lambda_1>,
@@ -33,7 +33,7 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\http_
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\http_server.h(131): message : во время компиляции функции-члена класс шаблон "void http_server::Listener<main::<lambda_2>>::AsyncRunSession(boost::asio::ip::tcp::socket &&)"
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\http_server.h(166): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_server::Listener<main::<lambda_2>>::AsyncRunSession(boost::asio::ip::tcp::socket &&)"
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\http_server.h(178): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "http_server::Listener<main::<lambda_2>>"
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\main.cpp(74): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_server::ServeHttp<main::<lambda_2>>(boost::asio::io_context &,const boost::asio::ip::tcp::endpoint &,RequestHandler &&)"
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\join_game\precode\src\main.cpp(73): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_server::ServeHttp<main::<lambda_2>>(boost::asio::io_context &,const boost::asio::ip::tcp::endpoint &,RequestHandler &&)"
           with
           [
               RequestHandler=main::<lambda_2>
