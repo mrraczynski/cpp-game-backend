@@ -55,8 +55,8 @@ void Game::AddGameSession(GameSession session) {
 std::string Game::GetCurrentGameState(const std::string_view& token, std::string& error_code)
 {
     int player_ec;
-    const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)), player_ec);
-    if (player_ec != 0)
+    const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)));
+    if (player == nullptr)
     {
         std::string body_str;
         error_code = "unknownToken";

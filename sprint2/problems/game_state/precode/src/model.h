@@ -328,11 +328,10 @@ public:
         return token;
     }
 
-    const Player* FindPlayerByToken(const Token& token, int& ec)
+    const Player* FindPlayerByToken(const Token& token)
     {
         if (players_.find(*token) != players_.end())
         {
-            ec = 0;
             return &players_.at(*token);
         }     
         return nullptr;

@@ -231,9 +231,8 @@ namespace http_handler {
             }
 
             return ExecuteAuthorized([&](const std::string_view& bearer_token) {
-                int ec;
-                const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(bearer_token)), ec);
-                if (ec != 0)
+                const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(bearer_token)));
+                if (player == nullptr)
                 {
                     std::string body_str;
                     json_loader::GetErrorJson(body_str, "unknownToken", "Player token has not been found");

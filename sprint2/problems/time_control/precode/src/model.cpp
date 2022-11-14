@@ -69,8 +69,8 @@ void Game::AddGameSession(GameSession session) {
 std::string Game::GetCurrentGameState(const std::string_view& token, std::string& error_code)
 {
     int player_ec;
-    const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)), player_ec);
-    if (player_ec != 0)
+    const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)));
+    if (player == nullptr)
     {
         std::string body_str;
         error_code = "unknownToken";
@@ -113,7 +113,7 @@ void Player::SetDogDirection(const std::string_view& dir, double speed) const
 void Game::SetPlayerDir(const std::string_view& token, const std::string_view& dir)
 {
     int player_ec;
-    const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)), player_ec);
+    const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)));
     std::optional<double> def_speed = FindMap(player->GetSession()->GetMapId())->GetDogSpeed();
     if (def_speed != std::nullopt)
     {

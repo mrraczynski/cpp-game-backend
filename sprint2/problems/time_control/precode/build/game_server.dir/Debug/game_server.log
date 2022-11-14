@@ -1,16 +1,4 @@
-﻿  api_handler.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.h(204,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
-  json_loader.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.h(204,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
-  main.cpp
+﻿  main.cpp
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.h(204,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
           with
           [
@@ -55,17 +43,19 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\ma
           [
               RequestHandler=main::<lambda_2>
           ]
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(309,40): warning C4101: e: неиспользованная локальная переменная
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(301,40): warning C4101: e: неиспользованная локальная переменная
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(59): message : выполняется компиляция ссылки на экземпляр шаблон функции "http_handler::StringResponse http_handler::ApiHandler::HandlePlayerActionRequest<boost::beast::http::string_body,std::allocator<char>>(const boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &)"
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(268,36): warning C4244: инициализация: преобразование "int64_t" в "int", возможна потеря данных
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(267,36): warning C4244: инициализация: преобразование "int64_t" в "int", возможна потеря данных
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(59): message : выполняется компиляция ссылки на экземпляр шаблон функции "http_handler::StringResponse http_handler::ApiHandler::HandleTimeTickRequest<boost::beast::http::string_body,std::allocator<char>>(const boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &)"
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(271,36): warning C4101: e: неиспользованная локальная переменная
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h(270,36): warning C4101: e: неиспользованная локальная переменная
   model.cpp
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.h(204,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
           with
           [
               _Ty=int
           ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.cpp(71,9): warning C4101: player_ec: неиспользованная локальная переменная
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.cpp(115,9): warning C4101: player_ec: неиспользованная локальная переменная
   request_handler.cpp
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.h(204,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
           with
@@ -73,5 +63,11 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\mo
               _Ty=int
           ]
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\request_handler.cpp(78,9): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  api_handler.cpp
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.h(204,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
+          with
+          [
+              _Ty=int
+          ]
   Создание кода...
   game_server.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\build\bin\game_server.exe

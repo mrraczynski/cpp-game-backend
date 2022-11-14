@@ -1,10 +1,4 @@
-﻿  api_handler.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
-  main.cpp
+﻿  main.cpp
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
           with
           [
@@ -56,5 +50,11 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\mode
               _Ty=int
           ]
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\request_handler.cpp(78,9): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  api_handler.cpp
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
+          with
+          [
+              _Ty=int
+          ]
   Создание кода...
   game_server.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\build\bin\game_server.exe
