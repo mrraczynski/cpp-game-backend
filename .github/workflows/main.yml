@@ -48,7 +48,7 @@ jobs:
         run: |
           cd sprint2/problems/time_control/solution
           docker build -t time_control .
-          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 time_control --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
+          echo "COMMAND_RUN=docker run --rm --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 my_http_server" >> $GITHUB_ENV
 
       - name: run tests sprint2 time_control
         run: pytest --junitxml=time_control.xml cpp-backend-tests-practicum/tests/test_s02_time_control.py
