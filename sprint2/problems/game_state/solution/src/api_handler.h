@@ -230,7 +230,7 @@ namespace http_handler {
             }
 
             std::string_view bearer_token = req["Authorization"];
-            if (bearer_token.size() < 8 || bearer_token.find("Bearer") == std::string::npos)
+            if (bearer_token.size() != 39 || bearer_token.find("Bearer") == std::string::npos)
             {
                 std::string body_str;
                 json_loader::GetErrorJson(body_str, "invalidToken", "Authorization header is required");
