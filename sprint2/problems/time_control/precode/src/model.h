@@ -28,7 +28,7 @@ using namespace std::literals;
 using Dimension = int;
 using Coord = Dimension;
 
-constexpr std::string_view Directions[5] = { "N", "W", "S", "E", ""};
+constexpr std::string_view Directions[5] = { "U", "L", "D", "R", "" };
 
 struct Point {
     Coord x, y;

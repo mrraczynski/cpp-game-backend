@@ -134,7 +134,7 @@ namespace http_handler {
 
     std::optional<std::string> ApiHandler::TryExtractToken(const std::string_view& bearer_token)
     {
-        if (bearer_token.size() < 8 || bearer_token.find("Bearer") == std::string::npos)
+        if (bearer_token.size() != 39 || bearer_token.find("Bearer") == std::string::npos)
         {
             return std::nullopt;
         }
