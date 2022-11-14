@@ -226,7 +226,7 @@ namespace http_handler {
             {
                 std::string body_str;
                 json_loader::GetErrorJson(body_str, "invalidMethod", "Invalid method");
-                return ResponsePostRequest(req, body_str, http::status::bad_request, ContentType::APPLICATION_JSON, "no-cache"sv);
+                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv);
             }
 
             std::string_view bearer_token = req["Authorization"];
