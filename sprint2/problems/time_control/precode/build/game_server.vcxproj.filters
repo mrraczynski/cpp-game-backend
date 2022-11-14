@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\http_server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\boost_json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\json_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\request_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\http_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\sdk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\tagged.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\json_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\request_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\src\api_handler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\time_control\precode\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{6BD173B8-7B01-3A8A-89A3-0AFEB1A75756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D664B84E-1C40-3C3A-9F24-9E54CE7C6DF8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,10 +1,4 @@
-﻿  api_handler.cpp
-E:\Projects\GitHub\cpp-game-backend\sprint2\problems\move_players\precode\src\model.h(198,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
-          with
-          [
-              _Ty=int
-          ]
-  main.cpp
+﻿  main.cpp
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\move_players\precode\src\model.h(198,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
           with
           [
@@ -59,4 +53,5 @@ E:\Projects\GitHub\cpp-game-backend\sprint2\problems\move_players\precode\src\mo
           ]
 E:\Projects\GitHub\cpp-game-backend\sprint2\problems\move_players\precode\src\request_handler.cpp(78,9): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
   Создание кода...
+  LINK : отсутствует база данных E:\Projects\GitHub\cpp-game-backend\sprint2\problems\move_players\precode\build\bin\game_server.pdb программы; выполняется полная компоновка
   game_server.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\move_players\precode\build\bin\game_server.exe

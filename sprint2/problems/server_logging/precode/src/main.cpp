@@ -59,7 +59,7 @@ int main(int argc, const char* argv[]) {
             });
 
         // 4. Создаём обработчик HTTP-запросов и связываем его с моделью игры
-        http_handler::RequestHandler handler{ game, "E:/Projects/GitHub/cpp-game-backend/sprint2/problems/server_logging/precode/static1/" /*argv[2]*/ };
+        http_handler::RequestHandler handler{ game, "E:/Projects/GitHub/cpp-game-backend/sprint2/problems/server_logging/precode/static/" /*argv[2]*/ };
 
         //http_handler::LoggingRequestHandler logging_handler{ std::forward<http_handler::RequestHandler>(handler) };
 
