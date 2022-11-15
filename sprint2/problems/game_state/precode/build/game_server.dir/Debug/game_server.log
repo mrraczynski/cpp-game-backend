@@ -1,0 +1,60 @@
+﻿  api_handler.cpp
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
+          with
+          [
+              _Ty=int
+          ]
+  main.cpp
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
+          with
+          [
+              _Ty=int
+          ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\api_handler.h(160,36): warning C4101: e: неиспользованная локальная переменная
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\api_handler.h(59): message : выполняется компиляция ссылки на экземпляр шаблон функции "http_handler::StringResponse http_handler::ApiHandler::HandleJoinGameRequest<boost::beast::http::string_body,std::allocator<char>>(const boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &)"
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\request_handler.h(16): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_handler::ApiHandler::HandleAPIRequest<boost::beast::http::string_body,std::allocator<char>,http_server::Session<RequestHandler>::HandleRequest::<lambda_1>>(boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &&,Send &&,const std::vector<std::string_view,std::allocator<std::string_view>> &)"
+          with
+          [
+              RequestHandler=main::<lambda_2>,
+              Send=http_server::Session<main::<lambda_2>>::HandleRequest::<lambda_1>
+          ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\main.cpp(72): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_handler::RequestHandler::operator ()<boost::beast::http::string_body,std::allocator<char>,_T2>(boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields> &&,Send &&)"
+          with
+          [
+              _T2=http_server::Session<main::<lambda_2>>::HandleRequest::<lambda_1>,
+              Send=http_server::Session<main::<lambda_2>>::HandleRequest::<lambda_1>
+          ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\http_server.h(93): message : выполняется компиляция ссылки на экземпляр шаблон функции "void main::<lambda_2>::operator ()<boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields>,http_server::Session<RequestHandler>::HandleRequest::<lambda_1>>(_T1 &&,_T2 &&) const"
+          with
+          [
+              RequestHandler=main::<lambda_2>,
+              _T1=boost::beast::http::message<true,boost::beast::http::string_body,boost::beast::http::fields>,
+              _T2=http_server::Session<main::<lambda_2>>::HandleRequest::<lambda_1>
+          ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\http_server.h(87): message : во время компиляции функции-члена класс шаблон "void http_server::Session<RequestHandler>::HandleRequest(http_server::SessionBase::HttpRequest &&)"
+          with
+          [
+              RequestHandler=main::<lambda_2>
+          ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\http_server.h(132): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "http_server::Session<RequestHandler>"
+          with
+          [
+              RequestHandler=main::<lambda_2>
+          ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\http_server.h(131): message : во время компиляции функции-члена класс шаблон "void http_server::Listener<main::<lambda_2>>::AsyncRunSession(boost::asio::ip::tcp::socket &&)"
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\http_server.h(166): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_server::Listener<main::<lambda_2>>::AsyncRunSession(boost::asio::ip::tcp::socket &&)"
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\http_server.h(178): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "http_server::Listener<main::<lambda_2>>"
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\main.cpp(72): message : выполняется компиляция ссылки на экземпляр шаблон функции "void http_server::ServeHttp<main::<lambda_2>>(boost::asio::io_context &,const boost::asio::ip::tcp::endpoint &,RequestHandler &&)"
+          with
+          [
+              RequestHandler=main::<lambda_2>
+          ]
+  request_handler.cpp
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\model.h(184,1): warning C4267: аргумент: преобразование из "size_t" в "_Ty"; возможна потеря данных
+          with
+          [
+              _Ty=int
+          ]
+E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\src\request_handler.cpp(78,9): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  Создание кода...
+  game_server.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\game_state\precode\build\bin\game_server.exe

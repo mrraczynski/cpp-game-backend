@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="E:\Projects\GitHub\cpp-game-backend\sprint2\problems\command_line\precode\build\CMakeFiles\5d02e130422961b2d0295814d1e4120f\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{E1D0C3ED-A457-34DE-93AF-3BDA4BD381A3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
