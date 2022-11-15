@@ -1,3 +1,0 @@
-E:/Projects/GitHub/cpp-game-backend/sprint2/problems/logger/precode/build/CMakeFiles/hello_log.dir
-E:/Projects/GitHub/cpp-game-backend/sprint2/problems/logger/precode/build/CMakeFiles/ALL_BUILD.dir
-E:/Projects/GitHub/cpp-game-backend/sprint2/problems/logger/precode/build/CMakeFiles/ZERO_CHECK.dir
