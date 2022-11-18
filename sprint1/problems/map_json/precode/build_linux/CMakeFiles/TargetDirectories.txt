@@ -1,0 +1,3 @@
+/home/mrraczynski/cpp-game-backend/sprint1/problems/map_json/precode/build_linux/CMakeFiles/game_server.dir
+/home/mrraczynski/cpp-game-backend/sprint1/problems/map_json/precode/build_linux/CMakeFiles/edit_cache.dir
+/home/mrraczynski/cpp-game-backend/sprint1/problems/map_json/precode/build_linux/CMakeFiles/rebuild_cache.dir
