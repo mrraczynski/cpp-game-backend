@@ -47,7 +47,14 @@ def make_shots():
     print('Shooting complete')
 
 
+def run_perf_record(server_pid):
+    perf_command = 'sudo perf record -o perf.data -g -p ' + str(server_pid)
+    print(perf_command)
+    process = run(perf_command)
+
+
 server = run(start_server())
+perf = run_perf_record(server.pid)
 make_shots()
 stop(server)
 time.sleep(1)
