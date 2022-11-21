@@ -23,9 +23,9 @@ def start_server():
     return parser.parse_args().server
 
 
-def run(command, output=None):
+def run(command, output=None, input=None):
     print(command)
-    process = subprocess.Popen(shlex.split(command), stdout=output, stderr=subprocess.DEVNULL)
+    process = subprocess.Popen(shlex.split(command), stdin=input, stdout=output, stderr=subprocess.DEVNULL)
     return process
 
 
@@ -50,19 +50,30 @@ def make_shots():
 
 def run_perf_record(server_pid):
     perf_command = 'sudo perf record -o perf.data -g -p ' + str(server_pid)
+    print(perf_command)
     process = run(perf_command)
-    print(process)
+    return process
 
 
 def run_perf_script():
-    perf_command = 'sudo perf script | ./FlameGraph/stackcollapse-perf.pl | ./FlameGraph/flamegraph.pl > graph.svg'
-    run(perf_command)
+    perf_command = 'sudo perf script -i perf.data'
+    first_script = './FlameGraph/stackcollapse-perf.pl'
+    second_script = './FlameGraph/flamegraph.pl'
+    p1 = run(perf_command, subprocess.PIPE)
+    p2 = run(first_script, subprocess.PIPE, p1.stdout)
+    p1.stdout.close()    
+    with open('graph.svg', 'w') as outfile:
+        p3 = run(second_script, outfile, p2.stdout)
+        p2.stdout.close()
 
 
 server = run(start_server())
 perf = run_perf_record(server.pid)
 make_shots()
 stop(server)
+print('Stop server')
+stop(perf, True)
+print('Stop perf')
 run_perf_script()
 time.sleep(1)
 print('Job done')
