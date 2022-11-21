@@ -68,20 +68,6 @@ jobs:
           BINARY_PATH: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/event2dot
           ARG: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/inputs
 
-      - name: build tests sprint3 gen_objects
-        run: |
-          cd sprint3/problems/gen_objects/solution
-          docker build -t gen_objects .
-          echo "COMMAND_RUN=docker run --rm --entrypoint /app/game_server --network ${DOCKER_NETWORK} --name cppserver -p 8080:8080 gen_objects --config-file /app/data/config.json --www-root /app/static/" >> $GITHUB_ENV
-
-
-      - name: run tests sprint3 gen_objects
-        run: pytest --junitxml=gen_objects.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
-        env:
-          SERVER_DOMAIN: cppserver
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/gen_objects/solution/data/config.json
-
-
       - name: Publish XML reports
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
