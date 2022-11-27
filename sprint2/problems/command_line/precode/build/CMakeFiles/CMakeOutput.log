@@ -7,7 +7,7 @@ Id flags:
 The output was:
 0
 MSBuild version 17.3.1+2badb37d1 for .NET Framework
-Сборка начата 15.11.2022 2:12:50.
+Сборка начата 26.11.2022 1:11:59.
 Проект "E:\Projects\GitHub\cpp-game-backend\sprint2\problems\command_line\precode\build\CMakeFiles\3.24.2\CompilerIdCXX\CompilerIdCXX.vcxproj" в узле 1 (целевые объекты по умолчанию).
 PrepareForBuild:
   Создание каталога "Debug\".
@@ -33,7 +33,7 @@ FinalizeBuildStatus:
     Предупреждений: 0
     Ошибок: 0
 
-Прошло времени 00:00:00.58
+Прошло времени 00:00:00.67
 
 
 Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -45,12 +45,12 @@ The CXX compiler identification is MSVC, found in "E:/Projects/GitHub/cpp-game-b
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: E:/Projects/GitHub/cpp-game-backend/sprint2/problems/command_line/precode/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_40b2f.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
+Run Build Command(s):C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe cmTC_6ff8c.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:m && MSBuild version 17.3.1+2badb37d1 for .NET Framework
   Оптимизирующий компилятор Microsoft (R) C/C++ версии 19.33.31630 для x64
   CMakeCXXCompilerABI.cpp
   (C) Корпорация Майкрософт (Microsoft Corporation).  Все права защищены.
-  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_40b2f.dir\Debug\\" /Fd"cmTC_40b2f.dir\Debug\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\Program Files\CMake\share\cmake-3.24\Modules\CMakeCXXCompilerABI.cpp"
-  cmTC_40b2f.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\command_line\precode\build\CMakeFiles\CMakeTmp\Debug\cmTC_40b2f.exe
+  cl /c /Zi /W3 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_6ff8c.dir\Debug\\" /Fd"cmTC_6ff8c.dir\Debug\vc143.pdb" /external:W3 /Gd /TP /errorReport:queue "C:\Program Files\CMake\share\cmake-3.24\Modules\CMakeCXXCompilerABI.cpp"
+  cmTC_6ff8c.vcxproj -> E:\Projects\GitHub\cpp-game-backend\sprint2\problems\command_line\precode\build\CMakeFiles\CMakeTmp\Debug\cmTC_6ff8c.exe
 
 
 
