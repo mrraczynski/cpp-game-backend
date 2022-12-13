@@ -119,12 +119,14 @@ namespace http_handler {
         }
 
         template <typename Body, typename Allocator>
-        StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const std::string_view& content_type, const http::status& status_code, const std::string& code, const std::string& message)
+        StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const std::string_view& content_type, 
+            const http::status& status_code, const std::string& code, const std::string& message, const std::string_view& cache_control = "no-cache"sv)
         {
             StringResponse response = StringResponse(status_code, req.version());
             response.set(http::field::content_type, content_type);
             json_loader::GetErrorJson(response.body(), code, message);
             response.content_length(response.body().size());
+            response.set(http::field::cache_control, cache_control);
             return response;
         }
 
