@@ -509,7 +509,7 @@ public:
             }
             else
             {
-                SetDogDirection(""sv, 0);
+                //SetDogDirection(""sv, 0);
                 dog_.SetSpeed(Vector2{ 0, 0 });
             }
         }
