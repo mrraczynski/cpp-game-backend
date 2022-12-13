@@ -351,7 +351,7 @@ namespace http_handler {
             {
                 std::string body_str;
                 json_loader::GetErrorJson(body_str, "invalidMethod", "Invalid method");
-                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET");
+                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET, HEAD");
             }
 
             if (!IsMapsRequest(target_vec))
