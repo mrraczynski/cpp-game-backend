@@ -34,7 +34,7 @@ SCENARIO("Loot creation") {
     GIVEN("game model for loot creation") {
         model::Map map(model::Map::Id("map1"), "Map 1");
         model::LootType lt_struct{ "name", "file", "type", 90, "color", 1 };
-        map.AddLootType(lt_struct);
+        map.AddLootType(lt_struct, "{\"name\":\"key\",\"file\":\"assets / key.obj\",\"type\":\"obj\",\"scale\":3E-2}"s);
         game.AddMap(map);
         WHEN("there is a map, but no roads") {
             THEN("no loot created")
@@ -62,7 +62,7 @@ SCENARIO("Loot creation") {
     GIVEN("game model for loot creation") {
         model::Map map(model::Map::Id("map1"), "Map 1");
         model::LootType lt_struct{ "name", "file", "type", 90, "color", 1 };
-        map.AddLootType(lt_struct);
+        map.AddLootType(lt_struct, "{\"name\":\"key\",\"file\":\"assets / key.obj\",\"type\":\"obj\",\"scale\":3E-2}"s);
         model::Road road(model::Road::HORIZONTAL, model::Point(1, 5), 2);
         map.AddRoad(road);
         game.AddMap(map);
@@ -78,7 +78,7 @@ SCENARIO("Loot creation") {
     GIVEN("game model for loot creation") {
         model::Map map(model::Map::Id("map1"), "Map 1");
         model::LootType lt_struct{ "name", "file", "type", 90, "color", 1 };
-        map.AddLootType(lt_struct);
+        map.AddLootType(lt_struct, "{\"name\":\"key\",\"file\":\"assets / key.obj\",\"type\":\"obj\",\"scale\":3E-2}"s);
         model::Road road(model::Road::HORIZONTAL, model::Point(1, 5), 2);
         map.AddRoad(road);
         model::GameSession session(model::GameSession::Id("map1"), model::Map::Id("map1"), 2);
