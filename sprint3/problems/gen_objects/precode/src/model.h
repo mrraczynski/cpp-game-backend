@@ -211,8 +211,8 @@ public:
     void AddLootType(const LootType& loot_type, const std::string& raw_loot_type)
     {
         loot_types_.push_back(loot_type);
-        loot_types_count_++;
         loot_types_[loot_types_.size() - 1].type_num = loot_types_count_;
+        loot_types_count_++;
         raw_loot_types_.push_back(raw_loot_type);
     }
 
