@@ -133,17 +133,21 @@ namespace http_handler {
         template <typename Body, typename Allocator>
         StringResponse ResponsePostRequest(const http::request<Body, http::basic_fields<Allocator>>& req, std::string& body_str,
             const http::status& status_code, const std::string_view& content_type, 
-            const std::string_view& cache_control, const std::string_view& allowed = "POST"sv)
+            const std::string_view& cache_control = "no-cache"sv, const std::string_view& allowed = "POST"sv)
         {
             StringResponse response = StringResponse(status_code, req.version());
             response.set(http::field::content_type, content_type);
-            response.set(http::field::cache_control, "no-cache"sv);
+            response.set(http::field::cache_control, cache_control);
             if (status_code == http::status::method_not_allowed)
             {
                 response.set(http::field::allow, allowed);
             }
-            response.body() = std::move(body_str);
+            if (req.method() != http::verb::head)
+            {
+                response.body() = std::move(body_str);
+            }
             response.prepare_payload();
+            std::cout << response;
             return response;
         }
 
@@ -349,11 +353,11 @@ namespace http_handler {
         template <typename Body, typename Allocator>
         StringResponse HandleMapsRequest(http::request<Body, http::basic_fields<Allocator>>& req, const std::vector<std::string_view>& target_vec)
         {
-            if (req.method() != http::verb::get)
+            if (req.method() != http::verb::get && req.method() != http::verb::head)
             {
                 std::string body_str;
                 json_loader::GetErrorJson(body_str, "invalidMethod", "Invalid method");
-                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET, HEAD");
+                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET, HEAD"sv);
             }
 
             if (!IsMapsRequest(target_vec))
