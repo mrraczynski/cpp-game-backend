@@ -117,7 +117,7 @@ int main(int argc, const char* argv[]) {
             std::shared_ptr<http_handler::RequestHandler> handler = std::make_shared<http_handler::RequestHandler>(game,
                 "E:/GitHub/cpp-game-backend/sprint3/problems/gen_objects/precode/static",//args.value().www_root,
                 ioc,
-                10//args.value().tick_period
+                std::nullopt//10//args.value().tick_period
                 );
 
             // 5. Запустить обработчик HTTP-запросов, делегируя их обработчику запросов

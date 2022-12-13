@@ -528,7 +528,7 @@ public:
             }
             else
             {
-                SetDogDirection(""sv, 0);
+                //SetDogDirection(""sv, 0);
                 dog_.SetSpeed(Vector2{ 0, 0 });
             }
         }
@@ -690,14 +690,14 @@ public:
 
     std::string GetCurrentGameState(const std::string_view& token, std::string& error_code);
 
-    void TickGame(TimeInterval time_delta)
+    void TickGame(double time_delta)
     {
-        double delta_time_sec = time_delta.count() / 1000;
+        double delta_time_sec = time_delta / 1000;
         PlayerTokens::GetInstance().TickPlayers(delta_time_sec, default_dog_speed_,
             [&](const Map::Id& id) {
             return FindMap(id);
         });
-        GenerateLoot(time_delta);
+        GenerateLoot(TimeInterval((int)time_delta));
     }
 
     void GenerateLoot(TimeInterval time_delta)
