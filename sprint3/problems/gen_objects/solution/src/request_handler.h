@@ -122,8 +122,7 @@ private:
 
     void TickerHandler(std::chrono::milliseconds delta_time)
     {
-        game_.TickGame(delta_time.count());
-        game_.GenerateLoot(delta_time);
+        game_.TickGame(delta_time);
     }
 
     bool IsApiRequest(const std::vector<std::string_view>& target_vec);

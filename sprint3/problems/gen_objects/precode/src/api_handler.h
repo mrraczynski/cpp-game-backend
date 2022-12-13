@@ -289,7 +289,7 @@ namespace http_handler {
                 json_loader::GetErrorJson(body_str, "invalidArgument", "Failed to parse action");
                 return ResponsePostRequest(req, body_str, http::status::bad_request, ContentType::APPLICATION_JSON, "no-cache"sv);
             }
-            game_.TickGame(time_delta);
+            game_.TickGame(std::chrono::milliseconds((int)time_delta));
             std::string body_str = json_loader::GetEmptyObject();
             return ResponsePostRequest(req, body_str, http::status::ok, ContentType::APPLICATION_JSON, "no-cache"sv);
         }

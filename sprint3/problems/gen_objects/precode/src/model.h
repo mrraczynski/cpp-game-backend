@@ -690,13 +690,14 @@ public:
 
     std::string GetCurrentGameState(const std::string_view& token, std::string& error_code);
 
-    void TickGame(double delta_time_msec)
+    void TickGame(TimeInterval time_delta)
     {
-        double delta_time_sec = delta_time_msec / 1000;
+        double delta_time_sec = time_delta.count() / 1000;
         PlayerTokens::GetInstance().TickPlayers(delta_time_sec, default_dog_speed_,
             [&](const Map::Id& id) {
             return FindMap(id);
         });
+        GenerateLoot(time_delta);
     }
 
     void GenerateLoot(TimeInterval time_delta)
