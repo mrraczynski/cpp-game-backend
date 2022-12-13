@@ -95,25 +95,31 @@ namespace json_loader {
             {
                 double x = std::round(dog.GetPosition().x / precision) * precision;
                 double y = std::round(dog.GetPosition().y / precision) * precision;
-                std::ostringstream ss;
+                /*std::ostringstream ss;
                 ss << "[";
                 ss << std::setprecision(3) << x;
                 ss << ",";
                 ss << std::setprecision(3) << y;
                 ss << "]";
-                json::value pos_arr = json::parse(ss.str());
+                json::value pos_arr = json::parse(ss.str());*/
+                json::array pos_arr;
+                pos_arr.emplace_back(x);
+                pos_arr.emplace_back(y);
                 player_json["pos"] = pos_arr;
             }
             {
                 double x = std::round(dog.GetSpeed().x / precision) * precision;
                 double y = std::round(dog.GetSpeed().y / precision) * precision;
-                std::ostringstream ss;
+                /*std::ostringstream ss;
                 ss << "[";
                 ss << std::setprecision(3) << x;
                 ss << ",";
                 ss << std::setprecision(3) << y;
                 ss << "]";
-                json::value speed_arr = json::parse(ss.str());
+                json::value speed_arr = json::parse(ss.str());*/
+                json::array speed_arr;
+                speed_arr.emplace_back(x);
+                speed_arr.emplace_back(y);
                 player_json["speed"] = speed_arr;
             }
             std::string str = std::string(model::Directions[dog.GetDirection()]);
