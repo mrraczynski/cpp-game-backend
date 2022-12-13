@@ -208,11 +208,12 @@ public:
         buildings_.emplace_back(building);
     }
 
-    void AddLootType(const LootType& loot_type)
+    void AddLootType(const LootType& loot_type, const std::string& raw_loot_type)
     {
         loot_types_.push_back(loot_type);
         loot_types_count_++;
         loot_types_[loot_types_.size() - 1].type_num = loot_types_count_;
+        raw_loot_types_.push_back(raw_loot_type);
     }
 
     void SetRandomizeSpawnPoints(bool randomize_spawns)
@@ -336,6 +337,11 @@ public:
         return loot_types_;
     }
 
+    const std::vector<std::string>& GetLootTypesRaw() const
+    {
+        return raw_loot_types_;
+    }
+
 private:
 
     std::optional<LootType> GetRandomLootType() const
@@ -369,6 +375,7 @@ private:
     int loot_types_count_ = 0;
     mutable std::vector<LootObject> loot_objects_;
     mutable int cur_loot_count_ = 0;
+    std::vector<std::string> raw_loot_types_;
 };
 
 class Dog {

@@ -103,7 +103,10 @@ namespace http_handler {
         {
             StringResponse response = StringResponse(http::status::ok, req.version());
             response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-            json_loader::GetMapJson(response.body(), map);
+            if (req.method() != http::verb::head)
+            {
+                json_loader::GetMapJson(response.body(), map);
+            }
             response.content_length(response.body().size());
             return response;
         }
@@ -113,7 +116,10 @@ namespace http_handler {
         {
             StringResponse response = StringResponse(http::status::ok, req.version());
             response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-            json_loader::GetMapsJson(response.body(), game_);
+            if (req.method() != http::verb::head)
+            {
+                json_loader::GetMapsJson(response.body(), game_);
+            }
             response.content_length(response.body().size());
             return response;
         }

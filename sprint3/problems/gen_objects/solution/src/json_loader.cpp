@@ -141,7 +141,7 @@ namespace json_loader {
     json::array GetMapLootTypesJson(const model::Map* map)
     {
         json::array loot_types_json;
-        for (auto& loot_type : map->GetLootTypes())
+        /*for (auto& loot_type : map->GetLootTypes())
         {
             json::object loot_type_json;
             loot_type_json[NAME] = loot_type.name;
@@ -151,6 +151,10 @@ namespace json_loader {
             loot_type_json["color"] = loot_type.color;
             loot_type_json["scale"] = loot_type.scale;
             loot_types_json.emplace_back(loot_type_json);
+        }*/
+        for (auto& loot_type : map->GetLootTypesRaw())
+        {
+            loot_types_json.emplace_back(json::parse(loot_type));
         }
         return loot_types_json;
     }
@@ -339,7 +343,7 @@ namespace json_loader {
                             loot_type.find("rotation") != loot_type.end() ? loot_type.at("rotation").as_int64() : 0,
                             loot_type.find("color") != loot_type.end() ? loot_type.at("color").as_string().data() : std::string(),
                             loot_type.find("scale") != loot_type.end() ?  loot_type.at("scale").as_double() : 0 };
-                        map.AddLootType(lt_struct);
+                        map.AddLootType(lt_struct, json::serialize(loot_type));
                     }
                 }
 
