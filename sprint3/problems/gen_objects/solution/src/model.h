@@ -518,8 +518,8 @@ public:
             double speed_x = game_dog_speed * delta_time;
             double speed_y = game_dog_speed * delta_time;
             Vector2 new_pos{
-                dog_.GetPosition().x * game_dog_speed * delta_time,
-                dog_.GetPosition().y * game_dog_speed * delta_time
+                dog_.GetPosition().x + game_dog_speed * delta_time,
+                dog_.GetPosition().y + game_dog_speed * delta_time
             };
             if (map->IsCoordinatesOnRoads(new_pos))
             {
