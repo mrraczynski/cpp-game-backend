@@ -18,12 +18,12 @@ namespace http_handler {
         return target_vec;
     }
 
-    bool ApiHandler::IsApiRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsApiRequest(const std::vector<std::string_view>& target_vec)
     {
         return target_vec[1].compare("api") == 0;
     }
 
-    bool ApiHandler::IsMapsRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsMapsRequest(const std::vector<std::string_view>& target_vec)
     {
         if (target_vec.size() >= 4)
         {
@@ -37,7 +37,7 @@ namespace http_handler {
         }
     }
 
-    bool ApiHandler::IsGameRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsGameRequest(const std::vector<std::string_view>& target_vec)
     {
         if (target_vec.size() >= 4)
         {
@@ -51,7 +51,7 @@ namespace http_handler {
         }
     }
 
-    bool ApiHandler::IsPlayerActionRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsPlayerActionRequest(const std::vector<std::string_view>& target_vec)
     {
         if (target_vec.size() == 6)
         {
@@ -65,7 +65,7 @@ namespace http_handler {
         }
     }
 
-    bool ApiHandler::IsTimeTickRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsTimeTickRequest(const std::vector<std::string_view>& target_vec)
     {
         if (target_vec.size() == 5)
         {
@@ -78,7 +78,7 @@ namespace http_handler {
         }
     }
 
-    bool ApiHandler::IsGameJoinRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsGameJoinRequest(const std::vector<std::string_view>& target_vec)
     {
         if (target_vec.size() == 5)
         {
@@ -91,7 +91,7 @@ namespace http_handler {
         }
     }
 
-    bool ApiHandler::IsGamePlayersRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsGamePlayersRequest(const std::vector<std::string_view>& target_vec)
     {
         if (target_vec.size() == 5)
         {
@@ -104,7 +104,7 @@ namespace http_handler {
         }
     }
 
-    bool ApiHandler::IsGameStateRequest(const std::vector<std::string>& target_vec)
+    bool ApiHandler::IsGameStateRequest(const std::vector<std::string_view>& target_vec)
     {
         if (target_vec.size() == 5)
         {
@@ -117,12 +117,12 @@ namespace http_handler {
         }
     }
 
-    bool ApiHandler::HasMapID(const std::vector<std::string>& target_vec)
+    bool ApiHandler::HasMapID(const std::vector<std::string_view>& target_vec)
     {
         return IsMapsRequest(target_vec) && target_vec.size() > 4;
     }
 
-    const model::Map* ApiHandler::FindMapID(const std::vector<std::string>& target_vec)
+    const model::Map* ApiHandler::FindMapID(const std::vector<std::string_view>& target_vec)
     {
         const model::Map* map_id = game_.FindMap(model::Map::Id(std::string(target_vec[4])));
         if (map_id != nullptr)

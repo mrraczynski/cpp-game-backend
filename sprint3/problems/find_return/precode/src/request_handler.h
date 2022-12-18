@@ -28,20 +28,10 @@ public:
     template <typename Body, typename Allocator, typename Send>
     void operator()(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send) {
         // Обработать запрос request и отправить ответ, используя send
-        BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
-            {
-                {"code", -100},
-                {"text", req.version()},
-                {"where", "operator()"}
-            })) << std::this_thread::get_id();;
         try
         {
             std::string decoded_path = UrlDecode(req.target());
-            target_vec = std::vector<std::string>();
-            target_vec = SplitRequest(decoded_path);
-            if (decoded_path.find("players") != std::string::npos) {
-                std::cout << "found!" << '\n';                
-            }
+            std::vector<std::string_view> target_vec = SplitRequest(decoded_path);
             if (!IsApiRequest(target_vec))
             {           
                 HandleStaticFileRequest(std::move(req), std::move(send), decoded_path);
@@ -51,9 +41,10 @@ public:
             {   
                 std::shared_ptr<ApiHandler> api_handler = api_handler_;                // Все запросы к API выполняются последовательно внутри strand
                 bool is_accepting_tick = accept_tick_request;
-                return net::dispatch(strand_, [&] {
+                return net::dispatch(strand_, [&api_handler, &req, &send, &target_vec, &is_accepting_tick] {
                     api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec, is_accepting_tick);
                     });
+
             }
         }
         catch (std::exception& e)
@@ -63,7 +54,7 @@ public:
     }
 
 private:
-    std::vector<std::string> SplitRequest(const std::string target);
+    std::vector<std::string_view> SplitRequest(const std::string_view target);
 
     template <typename Body, typename Allocator>
     StringResponse ResponseNotAllowed(http::request<Body, http::basic_fields<Allocator>> req)
@@ -134,7 +125,7 @@ private:
         game_.TickGame(delta_time.count());
     }
 
-    bool IsApiRequest(const std::vector<std::string>& target_vec);
+    bool IsApiRequest(const std::vector<std::string_view>& target_vec);
     
     bool IsSubPath(fs::path path, fs::path base);
 
@@ -155,8 +146,6 @@ private:
     std::shared_ptr<Ticker> ticker_ptr{ nullptr };
 
     bool accept_tick_request = false;
-
-    std::vector<std::string> target_vec;
 };
 
 }  // namespace http_handler

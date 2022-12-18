@@ -2,9 +2,9 @@
 #include <charconv>
 
 namespace http_handler {
-	std::vector<std::string> RequestHandler::SplitRequest(const std::string target)
+	std::vector<std::string_view> RequestHandler::SplitRequest(const std::string_view target)
 	{
-        std::vector<std::string> target_vec;
+        std::vector<std::string_view> target_vec;
         std::string_view delim("/");
         size_t prev = 0, next = 0;
         size_t delta = delim.length();
@@ -49,7 +49,7 @@ namespace http_handler {
         return result;
     }
 
-    bool RequestHandler::IsApiRequest(const std::vector<std::string>& target_vec)
+    bool RequestHandler::IsApiRequest(const std::vector<std::string_view>& target_vec)
     {
         return target_vec[1].compare("api") == 0;
     }
@@ -135,18 +135,7 @@ namespace http_handler {
                 {
                     return std::pair<bool, const std::string_view&>(true, ContentType::AUDIO_MPEG);
                 }
-                else if (std::strcmp(&decoded_path[pos], ".fbx") == 0)
-                {
-                    return std::pair<bool, const std::string_view&>(true, ContentType::MODEL_FBX);
-                }
-                else if (std::strcmp(&decoded_path[pos], ".obj") == 0)
-                {
-                    return std::pair<bool, const std::string_view&>(true, ContentType::MODEL_OBJ);
-                }
-                else if (std::strcmp(&decoded_path[pos], ".webmanifest") == 0)
-                {
-                    return std::pair<bool, const std::string_view&>(true, ContentType::WEBMANIFEST);
-                }
+
             }
             else if (decoded_path[pos] == '/' || decoded_path[pos] == '\\')
             {
