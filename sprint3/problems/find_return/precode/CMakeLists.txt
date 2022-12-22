@@ -14,42 +14,48 @@ endif()
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-add_executable(game_server
-	src/main.cpp
-	src/http_server.cpp
-	src/http_server.h
-	src/sdk.h
+add_library(model_lib STATIC 
 	src/model.h
-	src/model.cpp
-	src/tagged.h
-	src/boost_json.cpp
-	src/json_loader.h
-	src/json_loader.cpp
-	src/request_handler.cpp
-	src/request_handler.h
-	src/logger.h
-	src/logger.cpp
-	src/api_handler.h
-	src/api_handler.cpp
-	src/ticker.h
-	src/ticker.cpp
-	src/loot_generator.h
-	src/loot_generator.cpp
-)
-target_link_libraries(game_server PRIVATE Threads::Threads)
-target_include_directories(game_server PRIVATE CONAN_PKG::boost)
-target_link_libraries(game_server PRIVATE CONAN_PKG::boost)
-
-add_executable(game_server_tests
-    src/model.h
     src/model.cpp
     src/loot_generator.h
     src/loot_generator.cpp
     src/tagged.h
 	src/json_loader.h
 	src/json_loader.cpp
+	src/collision_detector.h
+	src/collision_detector.cpp
+	src/geom.h
+	src/geom.cpp)
+target_include_directories(model_lib PUBLIC CONAN_PKG::boost)
+target_link_libraries(model_lib PUBLIC CONAN_PKG::boost)
+	
+add_library(server_lib STATIC 
+	src/sdk.h	
+	src/http_server.cpp
+	src/http_server.h
+	src/logger.h
+	src/logger.cpp)	
+target_link_libraries(server_lib PUBLIC Threads::Threads)
+target_include_directories(server_lib PUBLIC CONAN_PKG::boost)
+target_link_libraries(server_lib PUBLIC CONAN_PKG::boost)
+
+add_executable(game_server
+	src/main.cpp
+	src/sdk.h	
+	src/boost_json.cpp	
+	src/request_handler.cpp
+	src/request_handler.h
+	src/api_handler.h
+	src/api_handler.cpp
+	src/ticker.h
+	src/ticker.cpp	
+)
+target_link_libraries(game_server PRIVATE model_lib)
+target_link_libraries(game_server PRIVATE server_lib)
+
+add_executable(game_server_tests    
     tests/model_tests.cpp
     tests/loot_generator_tests.cpp
 )
-target_include_directories(game_server_tests PRIVATE  CONAN_PKG::boost)
-target_link_libraries(game_server_tests PRIVATE CONAN_PKG::catch2 CONAN_PKG::boost Threads::Threads)
+target_link_libraries(game_server_tests PRIVATE CONAN_PKG::catch2)
+target_link_libraries(game_server_tests PRIVATE ${CATCH2_LIB} model_lib)

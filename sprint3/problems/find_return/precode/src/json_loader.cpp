@@ -26,6 +26,7 @@ namespace json_loader {
     constexpr char PLAYER_ID[] = "playerId";
     constexpr char PLAYER_NAME[] = "name";
     constexpr char PLAYERS[] = "players";
+    constexpr char TYPE[] = "type";
 
     model::Point MakePoint(json::value x, json::value y)
     {
@@ -74,7 +75,7 @@ namespace json_loader {
         for (auto& obj : map->GetLootObjects())
         {
             json::object loot_obj;
-            loot_obj["type"] = obj.loot_type.type_num;
+            loot_obj[TYPE] = obj.loot_type.type_num;
             json::array loot_pos_arr;
             loot_pos_arr.emplace_back(obj.position.x);
             loot_pos_arr.emplace_back(obj.position.y);
@@ -95,13 +96,6 @@ namespace json_loader {
             {
                 double x = std::round(dog.GetPosition().x / precision) * precision;
                 double y = std::round(dog.GetPosition().y / precision) * precision;
-                /*std::ostringstream ss;
-                ss << "[";
-                ss << std::setprecision(3) << x;
-                ss << ",";
-                ss << std::setprecision(3) << y;
-                ss << "]";
-                json::value pos_arr = json::parse(ss.str());*/
                 json::array pos_arr;
                 pos_arr.emplace_back(x);
                 pos_arr.emplace_back(y);
@@ -110,17 +104,21 @@ namespace json_loader {
             {
                 double x = std::round(dog.GetSpeed().x / precision) * precision;
                 double y = std::round(dog.GetSpeed().y / precision) * precision;
-                /*std::ostringstream ss;
-                ss << "[";
-                ss << std::setprecision(3) << x;
-                ss << ",";
-                ss << std::setprecision(3) << y;
-                ss << "]";
-                json::value speed_arr = json::parse(ss.str());*/
                 json::array speed_arr;
                 speed_arr.emplace_back(x);
                 speed_arr.emplace_back(y);
                 player_json["speed"] = speed_arr;
+            }
+            {
+                json::array json_bag;
+                for (auto& obj : player.GetCurrentBag())
+                {
+                    json::object json_obj;
+                    json_obj[ID] = obj.id;
+                    json_obj[TYPE] = obj.loot_type.type_num;
+                    json_bag.push_back(json_obj);
+                }
+                player_json["bag"] = json_bag;
             }
             std::string str = std::string(model::Directions[dog.GetDirection()]);
             player_json["dir"] = std::string(model::Directions[dog.GetDirection()]);
@@ -327,14 +325,25 @@ namespace json_loader {
                 game.SetLootPeriod(it->value().as_double());
             }
 
+            if (auto it = value.as_object().find("defaultBagCapacity"); it != value.as_object().end())
+            {
+                game.SetDefBagCapacity(it->value().as_double());
+            }
+
             for (int map_inc = 0; map_inc < maps_arr.size(); ++map_inc)
             {
                 const auto& maps_obj = maps_arr[map_inc].as_object();
                 model::Map map(model::Map::Id(std::string(maps_obj.at(ID).as_string().data())), std::string(maps_obj.at(NAME).as_string().data()));
                 map.SetRandomizeSpawnPoints(randomize_spawn_points);
+
                 if (auto it = maps_obj.find("dogSpeed"); it != maps_obj.end())
                 {
                     map.SetDogSpeed(it->value().as_double());                    
+                }
+
+                if (auto it = maps_obj.find("bagCapacity"); it != maps_obj.end())
+                {
+                    map.SetBagCapacity(it->value().as_double());
                 }
 
                 if (auto it = maps_obj.find("lootTypes"); it != maps_obj.end())

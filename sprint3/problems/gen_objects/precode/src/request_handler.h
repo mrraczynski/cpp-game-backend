@@ -58,7 +58,7 @@ public:
         }
         catch (std::exception& e)
         {
-            send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", e.what()));
+            send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", "Internal server error"));
         }
     }
 
