@@ -19,6 +19,6 @@ void GetMapJson(std::string& jsn, const model::Map* game);
 void GetMapJson(std::string& jsn, const model::Map* game);
 std::string GetEmptyObject();
 std::string CreatePlayersArray(std::vector<model::Player> players);
-std::string CreatePlayersWithParametersArray(std::vector<model::Player> players);
+std::string CreatePlayersWithParametersArray(std::vector<model::Player> players, const model::Map* map);
 
 }  // namespace json_loader

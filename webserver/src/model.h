@@ -2,11 +2,15 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <set>
+#include <deque>
 #include <random>
 #include <sstream>
 #include <optional>
 
 #include "tagged.h"
+#include "loot_generator.h"
+#include "collision_detector.h"
 
 /*enum class Direction {
     NORTH,
@@ -25,8 +29,11 @@ std::unordered_map<Direction, char> Directions{
 namespace model {
 
 using namespace std::literals;
+using namespace collision_detector;
 using Dimension = int;
 using Coord = Dimension;
+using TimeInterval = std::chrono::milliseconds;
+
 
 constexpr std::string_view Directions[5] = { "U", "L", "D", "R", "" };
 
@@ -49,6 +56,23 @@ struct Rectangle {
 
 struct Offset {
     Dimension dx, dy;
+};
+
+struct LootType {
+    std::string name;
+    std::string file;
+    std::string type;
+    int rotation;
+    std::string color;
+    double scale;
+    int type_num = 0;
+    int value = 0;
+};
+
+struct LootObject {
+    int id;
+    LootType loot_type;
+    Vector2 position;
 };
 
 class Road {
@@ -175,12 +199,25 @@ public:
         return offices_;
     }
 
+    int GetCurrentLootCount() const noexcept
+    {
+        return cur_loot_count_;
+    }
+
     void AddRoad(const Road& road) {
         roads_.emplace_back(road);
     }
 
     void AddBuilding(const Building& building) {
         buildings_.emplace_back(building);
+    }
+
+    void AddLootType(const LootType& loot_type, const std::string& raw_loot_type)
+    {
+        loot_types_.push_back(loot_type);
+        loot_types_[loot_types_.size() - 1].type_num = loot_types_count_;
+        loot_types_count_++;
+        raw_loot_types_.push_back(raw_loot_type);
     }
 
     void SetRandomizeSpawnPoints(bool randomize_spawns)
@@ -196,69 +233,60 @@ public:
         }
     }
 
+    void SetBagCapacity(std::optional<double> capacity)
+    {
+        if (capacity != std::nullopt)
+        {
+            bag_capacity_ = capacity;
+        }
+    }
+
     std::optional<double> GetDogSpeed() const
+    {
+        return dog_speed_;
+    }
+
+    std::optional<double> GetBagCapacity() const
     {
         return dog_speed_;
     }
 
     void AddOffice(Office office);
 
-    const Road& GetRandomRoad() const noexcept
+    std::optional<Road> GetRandomRoad() const noexcept;
+
+    std::optional<Vector2> GetRandomPointOnRoad() const;
+
+    bool IsCoordinatesOnRoads(Vector2 coord) const;
+
+    void CreateLootObjects(int count) const;
+
+    const std::vector<LootObject>& GetLootObjects() const
     {
-        std::random_device dev;
-        std::uniform_int_distribution<int> dist(1, roads_.size());
-        //return roads_[dist(dev) - 1];
-        return roads_[0];
+        return loot_objects_;
     }
 
-    Vector2 GetRandomPointOnRoad() const
+    LootObject CollectLootObject(int i) const
     {
-        if (!randomize_spawn_points_)
-        {
-            double tmp_x = roads_[0].GetStart().x;
-            double tmp_y = roads_[0].GetStart().y;
-            return Vector2{ tmp_x, tmp_y };
-        }
-        else
-        {
-            const Road& road = GetRandomRoad();
-            std::random_device dev;
-            std::uniform_real_distribution<double> dist(0, 1);
-            double rand = dist(dev);
-
-            auto dist_x = road.GetEnd().x - road.GetStart().x;
-            auto dist_y = road.GetEnd().y - road.GetStart().y;
-
-            auto mod_x = (dist_x * rand) + road.GetStart().x;
-            auto mod_y = (dist_y * rand) + road.GetStart().y;
-
-            double tmp_x = road.GetStart().x;
-            double tmp_y = road.GetStart().y;
-            return Vector2({ mod_x, mod_y });
-        }
+        LootObject loot_obj = loot_objects_[i];
+        loot_objects_.erase(loot_objects_.begin() + i);
+        return loot_obj;
     }
 
-    bool IsCoordinatesOnRoads(Vector2 coord) const
+    const std::vector<LootType>& GetLootTypes() const
     {
-        int counter = 0;
-        for (auto& road : roads_)
-        {
-            if (road.IsCoordinatesOnRoad(coord))
-            {
-                counter++;
-            }
-        }
-        if (counter > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return loot_types_;
+    }
+
+    const std::vector<std::string>& GetLootTypesRaw() const
+    {
+        return raw_loot_types_;
     }
 
 private:
+
+    std::optional<LootType> GetRandomLootType() const;
+
     using OfficeIdToIndex = std::unordered_map<Office::Id, size_t, util::TaggedHasher<Office::Id>>;
 
     Id id_;
@@ -270,7 +298,14 @@ private:
     Offices offices_;
     
     std::optional<double> dog_speed_ = std::nullopt;
+    std::optional<double> bag_capacity_ = std::nullopt;
     bool randomize_spawn_points_ = false;
+
+    std::vector<LootType> loot_types_;
+    int loot_types_count_ = 0;
+    mutable std::vector<LootObject> loot_objects_;
+    mutable int cur_loot_count_ = 0;
+    std::vector<std::string> raw_loot_types_;
 };
 
 class Dog {
@@ -279,12 +314,18 @@ public:
     Dog() noexcept
         : position_{ Vector2({0,0}) }
         , dir_{ 0 }
-        , speed_{ Vector2({0,0}) } {
+        , speed_{ Vector2({0,0}) }
+        , prev_position_{ Vector2({0,0}) }
+    {
         //position_ = session_.GetMap().GetRandomPointOnRoad();
     }
 
     Vector2 GetPosition() const noexcept {
         return position_;
+    }
+
+    Vector2 GetPrevPosition() const noexcept {
+        return prev_position_;
     }
 
     Vector2 GetSpeed() const noexcept {
@@ -308,11 +349,13 @@ public:
 
     void SetPosition(Vector2 pos) noexcept
     {
+        prev_position_ = position_;
         position_ = pos;
     }
 
 private:
     Vector2 position_;
+    Vector2 prev_position_;
     Vector2 speed_;
     int dir_;
 };
@@ -377,6 +420,37 @@ public:
         return id_;
     }
 
+    const std::vector<LootObject> GetCurrentBag()
+    {
+        return bag_;
+    }
+
+    void AddItemToBag(LootObject obj)
+    {
+        bag_.push_back(obj);
+        cur_bag_++;
+    }
+
+    int GetCurrentItemsCount()
+    {
+        return cur_bag_;
+    }
+
+    void CollectPoints()
+    {
+        for (auto& obj : bag_)
+        {
+            score_ = score_ + obj.loot_type.value;
+        }
+        bag_ = std::vector<LootObject>();
+        cur_bag_ = 0;
+    }
+
+    int GetScore()
+    {
+        return score_;
+    }
+
     void SetDogDirection(const std::string_view& dir, double speed) const;
 
     Dog& GetDog()
@@ -384,56 +458,16 @@ public:
         return dog_;
     }
 
-    template<typename Func>
-    void TickPlayer(double delta_time, double game_dog_speed, Func&& map_searcher)
-    {
-        const std::optional<double>& session_dog_speed = session_->GetDogSpeed();
-        const Map* map = map_searcher(session_->GetMapId());
-        if (session_dog_speed != std::nullopt)
-        {
-            double speed_x = session_dog_speed.value() * delta_time;
-            double speed_y = session_dog_speed.value() * delta_time;
-            Vector2 new_pos{
-                dog_.GetPosition().x + session_dog_speed.value() * delta_time,
-                dog_.GetPosition().y + session_dog_speed.value() * delta_time
-            };
-            if (map->IsCoordinatesOnRoads(new_pos))
-            {
-                dog_.SetPosition(new_pos);
-                dog_.SetSpeed(Vector2{ speed_x, speed_y });
-            }
-            else
-            {
-                SetDogDirection(""sv, 0);
-                dog_.SetSpeed(Vector2{ 0, 0 });
-            }
-        }
-        else
-        {
-            double speed_x = game_dog_speed * delta_time;
-            double speed_y = game_dog_speed * delta_time;
-            Vector2 new_pos{
-                dog_.GetPosition().x * game_dog_speed * delta_time,
-                dog_.GetPosition().y * game_dog_speed * delta_time
-            };
-            if (map->IsCoordinatesOnRoads(new_pos))
-            {
-                dog_.SetPosition(new_pos);
-                dog_.SetSpeed(Vector2{ speed_x, speed_y });
-            }
-            else
-            {
-                SetDogDirection(""sv, 0);
-                dog_.SetSpeed(Vector2{ 0, 0 });
-            }
-        }
-    }
+    void TickPlayer(double delta_time, double game_dog_speed, std::function<const Map* (const Map::Id&)> map_searcher);
 
 private:
     const GameSession* session_;
     std::string name_;
     int id_;
     mutable Dog dog_;
+    std::vector<LootObject> bag_;
+    int cur_bag_ = 0;
+    int score_ = 0;
 };
 
 namespace detail {
@@ -452,27 +486,19 @@ public:
         return token;
     }
 
-    const Player* FindPlayerByToken(const Token& token)
+    void AddItemToPlayer(LootObject obj, int id)
     {
-        if (players_.find(*token) != players_.end())
-        {
-            return &players_.at(*token);
-        }     
-        return nullptr;
+        GetPlayer(id).AddItemToBag(obj);
     }
 
-    std::vector<Player> GetPlayersBySession(const GameSession* session)
+    void CollectPlayerLoot(int id)
     {
-        std::vector<Player> session_players;
-        for (auto& player : players_)
-        {
-            if (player.second.GetSession()->GetId() == session->GetId())
-            {
-                session_players.push_back(player.second);
-            }
-        }
-        return session_players;
+        GetPlayer(id).CollectPoints();
     }
+
+    const Player* FindPlayerByToken(const Token& token);
+
+    std::vector<Player> GetPlayersBySession(const GameSession* session);
 
     static PlayerTokens& GetInstance()
     {
@@ -480,14 +506,7 @@ public:
         return instance;
     }
 
-    template<typename Func>
-    void TickPlayers(double delta_time, double game_dog_speed, Func&& map_searcher)
-    {
-        for (auto& player : players_)
-        {
-            player.second.TickPlayer(delta_time, game_dog_speed, map_searcher);
-        }
-    }
+    void TickPlayers(double delta_time, double game_dog_speed, std::function<const Map* (const Map::Id&)> map_searcher);
     
 private:
     std::random_device random_device_;
@@ -503,6 +522,17 @@ private:
     // два 64-разрядных числа и, переведя их в hex-строки, склейте в одну.
     // Вы можете поэкспериментировать с алгоритмом генерирования токенов,
     // чтобы сделать их подбор ещё более затруднительным
+
+    Player& GetPlayer(int id)
+    {
+        for (auto& player : players_)
+        {
+            if (player.second.GetId() == id)
+            {
+                return player.second;
+            }
+        }
+    }
 
     Token GenerateToken()
     {
@@ -521,7 +551,7 @@ class Game {
 public:
     using Maps = std::vector<Map>;
 
-    using GameSessions = std::vector<GameSession>;
+    using GameSessions = std::deque<GameSession>;
 
     int GetPlayerId()
     {
@@ -535,6 +565,31 @@ public:
     void SetDogSpeed(double speed)
     {
         default_dog_speed_ = speed;
+    }
+
+    void SetLootPeriod(double loot_period)
+    {
+        loot_period_ = loot_period;
+    }
+
+    void SetLootProbability(double loot_probability)
+    {
+        loot_probability_ = loot_probability;
+    }
+
+    void SetDefBagCapacity(double default_bag_capacity)
+    {
+        default_bag_capacity_ = default_bag_capacity;
+    }
+
+    double GetLootPeriod()
+    {
+        return loot_period_;
+    }
+
+    double GetLootProbability()
+    {
+        return loot_probability_;
     }
 
     const Maps& GetMaps() const noexcept {
@@ -565,16 +620,14 @@ public:
 
     std::string GetCurrentGameState(const std::string_view& token, std::string& error_code);
 
-    void TickGame(double delta_time_msec)
-    {
-        double delta_time_sec = delta_time_msec / 1000;
-        PlayerTokens::GetInstance().TickPlayers(delta_time_sec, default_dog_speed_,
-            [&](const Map::Id& id) {
-            return FindMap(id);
-        });
-    }
+    void TickGame(double time_delta);
+
+    void GenerateLoot(TimeInterval time_delta);
 
 private:
+
+    void CheckCollisions();
+
     using MapIdHasher = util::TaggedHasher<Map::Id>;
     using MapIdToIndex = std::unordered_map<Map::Id, size_t, MapIdHasher>;
     using GameSessionIdHasher = util::TaggedHasher<GameSession::Id>;
@@ -582,10 +635,17 @@ private:
 
     std::vector<Map> maps_;
     MapIdToIndex map_id_to_index_;
-    std::vector<GameSession> sessions_;
+
+    std::deque<GameSession> sessions_;
     GameSessionIdToIndex session_id_to_index_;
+
     int player_id_ = 0;
     double default_dog_speed_ = 1;
+    double default_bag_capacity_ = 3;
+
+    double loot_period_ = 5.0f;
+    double loot_probability_ = .5f;
+    loot_gen::LootGenerator loot_generator_{ TimeInterval(10ms), loot_probability_};
 };
 
 }  // namespace model

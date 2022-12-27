@@ -31,7 +31,8 @@ public:
         try
         {
             std::string decoded_path = UrlDecode(req.target());
-            std::vector<std::string_view> target_vec = SplitRequest(decoded_path);
+            target_vec = std::vector<std::string>();
+            target_vec = SplitRequest(decoded_path);
             if (!IsApiRequest(target_vec))
             {           
                 HandleStaticFileRequest(std::move(req), std::move(send), decoded_path);
@@ -41,20 +42,33 @@ public:
             {   
                 std::shared_ptr<ApiHandler> api_handler = api_handler_;                // Все запросы к API выполняются последовательно внутри strand
                 bool is_accepting_tick = accept_tick_request;
-                return net::dispatch(strand_, [&api_handler, &req, &send, &target_vec, &is_accepting_tick] {
-                    api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec, is_accepting_tick);
-                    });
-
+                api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec, is_accepting_tick);
+                /*http::request<Body, http::basic_fields<Allocator>> req_obj = req;
+                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                    {
+                        {"code", -100},
+                        {"text", req_obj.version()},
+                        {"where", "operator() before lambda"}
+                    })) << std::this_thread::get_id();
+                return net::dispatch(strand_, [&] {
+                    BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                        {
+                            {"code", -100},
+                            {"text", req_obj.version()},
+                            {"where", "operator() lambda"}
+                        })) << std::this_thread::get_id();
+                    api_handler->HandleAPIRequest(req_obj, std::move(send), target_vec, is_accepting_tick);
+                    });*/
             }
         }
         catch (std::exception& e)
         {
-            send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", e.what()));
+            send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", "Internal server error"));
         }
     }
 
 private:
-    std::vector<std::string_view> SplitRequest(const std::string_view target);
+    std::vector<std::string> SplitRequest(const std::string target);
 
     template <typename Body, typename Allocator>
     StringResponse ResponseNotAllowed(http::request<Body, http::basic_fields<Allocator>> req)
@@ -125,7 +139,7 @@ private:
         game_.TickGame(delta_time.count());
     }
 
-    bool IsApiRequest(const std::vector<std::string_view>& target_vec);
+    bool IsApiRequest(const std::vector<std::string>& target_vec);
     
     bool IsSubPath(fs::path path, fs::path base);
 
@@ -146,6 +160,9 @@ private:
     std::shared_ptr<Ticker> ticker_ptr{ nullptr };
 
     bool accept_tick_request = false;
+
+    std::vector<std::string> target_vec;
+
 };
 
 }  // namespace http_handler

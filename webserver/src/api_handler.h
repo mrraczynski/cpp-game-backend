@@ -38,6 +38,9 @@ namespace http_handler {
         constexpr static std::string_view IMAGE_SVG = "image/svg+xml"sv;
         constexpr static std::string_view AUDIO_MPEG = "audio/mpeg"sv;
         constexpr static std::string_view FOLDER = "folder"sv;
+        constexpr static std::string_view MODEL_FBX = "model/obj"sv;
+        constexpr static std::string_view MODEL_OBJ = "model/obj"sv;
+        constexpr static std::string_view WEBMANIFEST = "application/manifest+json"sv;
         // При необходимости внутрь ContentType можно добавить и другие типы контента
     };
    
@@ -47,12 +50,10 @@ namespace http_handler {
             : game_{ game } {
         }
 
-        //RequestHandler(const RequestHandler&) = delete;
         ApiHandler& operator=(const ApiHandler&) = delete;  
 
         template <typename Body, typename Allocator, typename Send>
-        //StringResponse HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec)
-        void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string_view>& target_vec, bool is_accepting_tick)
+        void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string>& target_vec, bool is_accepting_tick)
         {
             try {
                 if (IsGameJoinRequest(target_vec))
@@ -88,9 +89,6 @@ namespace http_handler {
             }
             catch (std::exception& e)
             {
-                /*std::string body_str;
-                json_loader::GetErrorJson(body_str, e.what(), e.what());
-                send(ResponsePostRequest(req, body_str, http::status::unauthorized, ContentType::APPLICATION_JSON, e.what()));*/
                 send(ResponseError(req, ContentType::APPLICATION_JSON, http::status::internal_server_error, "internalServerError", e.what()));
             }
         }
@@ -103,7 +101,10 @@ namespace http_handler {
         {
             StringResponse response = StringResponse(http::status::ok, req.version());
             response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-            json_loader::GetMapJson(response.body(), map);
+            if (req.method() != http::verb::head)
+            {
+                json_loader::GetMapJson(response.body(), map);
+            }
             response.content_length(response.body().size());
             return response;
         }
@@ -113,34 +114,42 @@ namespace http_handler {
         {
             StringResponse response = StringResponse(http::status::ok, req.version());
             response.set(http::field::content_type, ContentType::APPLICATION_JSON);
-            json_loader::GetMapsJson(response.body(), game_);
+            if (req.method() != http::verb::head)
+            {
+                json_loader::GetMapsJson(response.body(), game_);
+            }
             response.content_length(response.body().size());
             return response;
         }
 
         template <typename Body, typename Allocator>
-        StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const std::string_view& content_type, const http::status& status_code, const std::string& code, const std::string& message)
+        StringResponse ResponseError(http::request<Body, http::basic_fields<Allocator>> req, const std::string_view& content_type, 
+            const http::status& status_code, const std::string& code, const std::string& message, const std::string_view& cache_control = "no-cache"sv)
         {
             StringResponse response = StringResponse(status_code, req.version());
             response.set(http::field::content_type, content_type);
             json_loader::GetErrorJson(response.body(), code, message);
             response.content_length(response.body().size());
+            response.set(http::field::cache_control, cache_control);
             return response;
         }
 
         template <typename Body, typename Allocator>
         StringResponse ResponsePostRequest(const http::request<Body, http::basic_fields<Allocator>>& req, std::string& body_str,
             const http::status& status_code, const std::string_view& content_type, 
-            const std::string_view& cache_control, const std::string_view& allowed = "POST"sv)
+            const std::string_view& cache_control = "no-cache"sv, const std::string_view& allowed = "POST"sv)
         {
             StringResponse response = StringResponse(status_code, req.version());
             response.set(http::field::content_type, content_type);
-            response.set(http::field::cache_control, "no-cache"sv);
+            response.set(http::field::cache_control, cache_control);
             if (status_code == http::status::method_not_allowed)
             {
                 response.set(http::field::allow, allowed);
             }
-            response.body() = std::move(body_str);
+            if (req.method() != http::verb::head)
+            {
+                response.body() = std::move(body_str);
+            }
             response.prepare_payload();
             return response;
         }
@@ -157,14 +166,25 @@ namespace http_handler {
 
         template <typename Fn, typename Body, typename Allocator>
         StringResponse ExecuteAuthorized(Fn&& action, const http::request<Body, http::basic_fields<Allocator>>& req) {
-            std::string_view bearer_token = req["Authorization"];
-            if (auto token = TryExtractToken(bearer_token)) {
-                return action(token.value());
+            try
+            {
+                std::string_view bearer_token = req["Authorization"];
+                if (auto token = TryExtractToken(bearer_token)) {
+                    return action(token.value());
+                }
+                else {
+                    return MakeUnauthorizedError(req);
+                }
             }
-            else {
-                return MakeUnauthorizedError(req);
+            catch (std::exception& e)
+            {
+                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                    {
+                        {"code", -1},
+                        {"text", e.what()},
+                        {"where", "api_handler/ExecuteAuthorized"}
+                    })) << "error"sv;
             }
-
         }
 
         template <typename Body, typename Allocator>
@@ -209,7 +229,7 @@ namespace http_handler {
             {
                 int id = game_.GetPlayerId();
                 //TODO: изменить логику определения сессии
-                model::Player player(id, user_name, game_.FindMap(model::Map::Id(map_id))->GetRandomPointOnRoad(), game_.FindGameSessionByMap(model::Map::Id(map_id)));
+                model::Player player(id, user_name, game_.FindMap(model::Map::Id(map_id))->GetRandomPointOnRoad().value(), game_.FindGameSessionByMap(model::Map::Id(map_id)));
                 model::Token token = model::PlayerTokens::GetInstance().AddPlayer(player);
                 std::string body_str;
                 json_loader::GetAuthInfo(body_str, *token, id);
@@ -345,13 +365,13 @@ namespace http_handler {
         }
 
         template <typename Body, typename Allocator>
-        StringResponse HandleMapsRequest(http::request<Body, http::basic_fields<Allocator>>& req, const std::vector<std::string_view>& target_vec)
+        StringResponse HandleMapsRequest(http::request<Body, http::basic_fields<Allocator>>& req, const std::vector<std::string>& target_vec)
         {
-            if (req.method() != http::verb::get)
+            if (req.method() != http::verb::get && req.method() != http::verb::head)
             {
                 std::string body_str;
                 json_loader::GetErrorJson(body_str, "invalidMethod", "Invalid method");
-                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET");
+                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET, HEAD"sv);
             }
 
             if (!IsMapsRequest(target_vec))
@@ -379,25 +399,25 @@ namespace http_handler {
             }
         }
 
-        bool IsApiRequest(const std::vector<std::string_view>& target_vec);
+        bool IsApiRequest(const std::vector<std::string>& target_vec);
 
-        bool IsMapsRequest(const std::vector<std::string_view>& target_vec);
+        bool IsMapsRequest(const std::vector<std::string>& target_vec);
 
-        bool IsGameRequest(const std::vector<std::string_view>& target_vec);
+        bool IsGameRequest(const std::vector<std::string>& target_vec);
 
-        bool IsGameJoinRequest(const std::vector<std::string_view>& target_vec);
+        bool IsGameJoinRequest(const std::vector<std::string>& target_vec);
 
-        bool IsGamePlayersRequest(const std::vector<std::string_view>& target_vec);
+        bool IsGamePlayersRequest(const std::vector<std::string>& target_vec);
 
-        bool IsGameStateRequest(const std::vector<std::string_view>& target_vec);
+        bool IsGameStateRequest(const std::vector<std::string>& target_vec);
 
-        bool IsPlayerActionRequest(const std::vector<std::string_view>& target_vec);
+        bool IsPlayerActionRequest(const std::vector<std::string>& target_vec);
 
-        bool IsTimeTickRequest(const std::vector<std::string_view>& target_vec);
+        bool IsTimeTickRequest(const std::vector<std::string>& target_vec);
 
-        bool HasMapID(const std::vector<std::string_view>& target_vec);
+        bool HasMapID(const std::vector<std::string>& target_vec);
 
-        const model::Map* FindMapID(const std::vector<std::string_view>& target_vec);
+        const model::Map* FindMapID(const std::vector<std::string>& target_vec);
 
         model::Game& game_;
 
