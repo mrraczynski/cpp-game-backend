@@ -96,18 +96,17 @@ void RunWorkers(unsigned n, const Fn& fn) {
 
 bool file_exists(const fs::path& p, fs::file_status s = fs::file_status{})
 {
-    std::cout << p;
     if (fs::status_known(s) ? fs::exists(s) : fs::exists(p))
         return true;
     else
         return false;
 }
 
-void LoadSaveFile(model::Game& game, std::optional<Args>& args, std::optional<std::function<void()>>& save_func)
+void LoadSaveFile(model::Game& game, std::optional<Args>& args, std::optional<std::function<void()>>& save_func, fs::path& st_file)
 {
     if (args.value().state_file != std::nullopt)
     {
-        fs::path st_file{ args.value().state_file.value() };
+        st_file = fs::path{ args.value().state_file.value() };
 
         if (file_exists(st_file))
         {
@@ -133,30 +132,6 @@ void LoadSaveFile(model::Game& game, std::optional<Args>& args, std::optional<st
                 throw ex;
             }
 
-            save_func = [&]() {
-                try
-                {
-                    std::string path = st_file.string() + ".tmp"s;
-                    std::ofstream file(path);
-                    std::stringstream ss;
-                    boost::archive::text_oarchive oa{ ss };
-                    ser::GameRepr game_repr{ game };
-                    oa << game_repr;
-                    file << ss.rdbuf();
-                    file.close();
-                    fs::rename(path, path.substr(0, path.find(".tmp"s)));
-                }
-                catch (std::exception& ex)
-                {
-                    BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
-                        {
-                            {"code", -1},
-                            {"exception", ex.what()}
-                        })) << "save file write error"sv;
-                    return;
-                }
-            };
-
         }
         else
         {
@@ -164,6 +139,29 @@ void LoadSaveFile(model::Game& game, std::optional<Args>& args, std::optional<st
             game = json_loader::LoadGame(args.value().config_file,
                 args.value().is_randomize_spawn_points);
         }
+        save_func = [&]() {
+            try
+            {
+                std::string path = st_file.string() + ".tmp"s;
+                std::ofstream file(path);
+                std::stringstream ss;
+                boost::archive::text_oarchive oa{ ss };
+                ser::GameRepr game_repr{ game };
+                oa << game_repr;
+                file << ss.rdbuf();
+                file.close();
+                fs::rename(path, path.substr(0, path.find(".tmp"s)));
+            }
+            catch (std::exception& ex)
+            {
+                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                    {
+                        {"code", -1},
+                        {"exception", ex.what()}
+                    })) << "save file write error"sv;
+                return;
+            }
+        };
     }
     else
     {
@@ -178,19 +176,20 @@ int main(int argc, const char* argv[]) {
         logger::InitBoostLog();
         //DEBUG
         std::optional<Args> args = Args{};
-        args.value().config_file = "E:/GitHub/cpp-game-backend/sprint4/problems/state_serialization/precode_new/data/config.json";
+        args.value().config_file = "E:/GitHub/cpp-game-backend/sprint4/problems/state_serialization/precode/data/config.json";
         args.value().is_randomize_spawn_points = true;
         args.value().save_state_period = 50;
-        args.value().state_file = "E:/GitHub/cpp-game-backend/sprint4/problems/state_serialization/precode_new/file";
+        args.value().state_file = "E:/GitHub/cpp-game-backend/sprint4/problems/state_serialization/precode/file";
         args.value().tick_period = std::nullopt;
-        args.value().www_root = "E:/GitHub/cpp-game-backend/sprint4/problems/state_serialization/precode_new/static";
+        args.value().www_root = "E:/GitHub/cpp-game-backend/sprint4/problems/state_serialization/precode/static";
         if (args) {
         //DEBUG
         //if (auto args = ParseCommandLine(argc, argv)) {
             model::Game game;
             std::optional<std::function<void()>> save_func = std::nullopt;
+            fs::path st_file;
 
-            LoadSaveFile(game, args, save_func);
+            LoadSaveFile(game, args, save_func, st_file);
 
             // 2. Инициализируем io_context
             const unsigned num_threads = std::thread::hardware_concurrency();

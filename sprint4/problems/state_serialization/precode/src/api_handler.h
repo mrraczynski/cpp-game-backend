@@ -54,7 +54,7 @@ namespace http_handler {
 
         template <typename Body, typename Allocator, typename Send>
         void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string>& target_vec, bool is_accepting_tick,
-            std::optional<std::function<void()>> save_func = std::nullopt)
+            std::optional<std::function<void()>>& save_func)
         {
             try {
                 if (IsGameJoinRequest(target_vec))
@@ -264,7 +264,7 @@ namespace http_handler {
         }
 
         template <typename Body, typename Allocator>
-        StringResponse HandleTimeTickRequest(const http::request<Body, http::basic_fields<Allocator>>& req, bool is_accepting_tick, std::optional<std::function<void()>> save_func = std::nullopt)
+        StringResponse HandleTimeTickRequest(const http::request<Body, http::basic_fields<Allocator>>& req, bool is_accepting_tick, std::optional<std::function<void()>>& save_func)
         {
             if (!is_accepting_tick)
             {

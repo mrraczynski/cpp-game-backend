@@ -23,7 +23,7 @@ public:
     using Handler = std::function<void(std::chrono::milliseconds delta)>;
     using Saver = std::function<void()>;
 
-    Ticker(Strand strand, std::chrono::milliseconds period, Handler handler, std::optional<Saver> saver = std::nullopt, std::optional<std::chrono::milliseconds> save_period = std::nullopt
+    Ticker(Strand strand, std::chrono::milliseconds period, Handler handler, std::optional<Saver>& saver, std::optional<std::chrono::milliseconds> save_period = std::nullopt
     ) 
         : strand_{ strand }
         , period_{ period }
@@ -93,7 +93,7 @@ private:
     std::chrono::milliseconds period_;
     std::optional<std::chrono::milliseconds> save_period_;
     Handler handler_;
-    std::optional <Saver> saver_;
+    std::optional <Saver>& saver_;
     chrono::steady_clock::time_point last_tick_;
     chrono::steady_clock::time_point last_save_;
 };

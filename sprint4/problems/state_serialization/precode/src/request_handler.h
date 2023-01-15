@@ -9,8 +9,8 @@ namespace http_handler {
 class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
 public:
     explicit RequestHandler(model::Game& game, fs::path static_dir, net::io_context& ioc, std::optional<int> tick_period, 
-        std::optional<std::function<void()>> save_func = std::nullopt, std::optional<int> save_state_period = std::nullopt)
-        : game_{ game }, static_dir_{ static_dir }, ioc_{ ioc }  
+        std::optional<std::function<void()>> save_func, std::optional<int> save_state_period = std::nullopt)
+        : game_{ game }, static_dir_{ static_dir }, ioc_{ ioc }, save_func_{ save_func }
     {
         if (tick_period)
         {
@@ -27,8 +27,7 @@ public:
             ticker_ptr->Start();
         }
         else
-        {
-            save_func_ = save_func;
+        {            
             accept_tick_request = true;
         }
     }
@@ -52,7 +51,7 @@ public:
             else
             {   
                 std::shared_ptr<ApiHandler> api_handler = api_handler_;                // Все запросы к API выполняются последовательно внутри strand
-                api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec, accept_tick_request);
+                api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec, accept_tick_request, save_func_);
             }
         }
         catch (std::exception& e)
@@ -157,7 +156,7 @@ private:
 
     std::vector<std::string> target_vec;
 
-    std::optional<std::function<void()>> save_func_ = std::nullopt;
+    std::optional<std::function<void()>> save_func_;
 
 };
 

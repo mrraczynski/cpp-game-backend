@@ -153,12 +153,13 @@ namespace serialization {
         GameSessionRepr() 
             : map_id_ (model::Map::Id(std::string()))
             , id_(model::GameSession::Id(std::string()))
+            , dog_speed_(0)
         {};
 
         explicit GameSessionRepr(const model::GameSession& session)
             : map_id_(session.GetMapId())
             , id_(session.GetId())
-            , dog_speed_(session.GetDogSpeed()) {
+            , dog_speed_(session.GetDogSpeed() != std::nullopt ? session.GetDogSpeed().value() : 0) {
         }
 
         [[nodiscard]] model::GameSession Restore() const {
@@ -170,13 +171,13 @@ namespace serialization {
         void serialize(Archive& ar, [[maybe_unused]] const unsigned version) {
             ar& (*id_);
             ar& (*map_id_);
-            ar& dog_speed_.value();
+            ar& dog_speed_;
         }
 
     private:
         model::Map::Id map_id_;
         model::GameSession::Id id_;
-        std::optional<double> dog_speed_;
+        double dog_speed_;
     };
 
     class MapRepr {
@@ -188,8 +189,8 @@ namespace serialization {
         explicit MapRepr(const model::Map& map)
             : id_(map.GetId())
             , name_(map.GetName())
-            , dog_speed_(map.GetDogSpeed())
-            , bag_capacity_(map.GetBagCapacity())
+            , dog_speed_(map.GetDogSpeed() != std::nullopt ? map.GetDogSpeed().value() : 0)
+            , bag_capacity_(map.GetBagCapacity() != std::nullopt ? map.GetBagCapacity().value() : 0)
             , randomize_spawn_points_(map.IsRandomSpawnPoints())
             , loot_types_(map.GetLootTypes())
             , loot_objects_(map.GetLootObjects())
@@ -244,8 +245,8 @@ namespace serialization {
             ar& roads_;
             ar& buildings_;
             ar& offices_;
-            ar& dog_speed_.value();
-            ar& bag_capacity_.value();
+            ar& dog_speed_;
+            ar& bag_capacity_;
             ar& randomize_spawn_points_;
             ar& loot_types_;
             ar& loot_objects_;
@@ -259,8 +260,8 @@ namespace serialization {
         std::vector<BuildingRepr> buildings_;
         std::vector<OfficeRepr> offices_;
 
-        std::optional<double> dog_speed_ = std::nullopt;
-        std::optional<double> bag_capacity_ = std::nullopt;
+        double dog_speed_;
+        double bag_capacity_;
         bool randomize_spawn_points_ = false;
 
         std::vector<model::LootType> loot_types_;
