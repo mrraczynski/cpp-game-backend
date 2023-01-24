@@ -13,16 +13,16 @@ namespace db = db_command;
 
 int main(int argc, const char* argv[]) {
     try {
-        /*if (argc == 1) {
+        if (argc == 1) {
             std::cout << "Usage: connect_db <conn-string>\n"sv;
             return EXIT_SUCCESS;
         }
         else if (argc != 2) {
             std::cerr << "Invalid command line\n"sv;
             return EXIT_FAILURE;
-        }*/
+        }
 
-        db::DBSession db_session{ /*argv[1]*/  "postgres://postgres:PupkiN@localhost:5432/postgres" };
+        db::DBSession db_session{ argv[1] };
         db_session.CreateBooksTable();
         db_session.SetCommit();
 
