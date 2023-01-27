@@ -24,7 +24,15 @@ CREATE TABLE IF NOT EXISTS authors (
     name varchar(100) UNIQUE NOT NULL
 );
 )"_zv);
-    // ... создать другие таблицы
+    work_.exec(R"(
+CREATE TABLE IF NOT EXISTS books
+(
+    id uuid CONSTRAINT book_id_constraint NOT NULL,
+    author_id uuid NOT NULL,
+    title character varying(100) NOT NULL,
+    publication_year integer
+)
+)"_zv);
 
     // коммитим изменения
     work_.commit();
