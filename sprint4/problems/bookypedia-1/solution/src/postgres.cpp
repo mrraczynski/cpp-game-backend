@@ -29,6 +29,7 @@ SELECT id,
     {
         authors[row[0].c_str()] = row[1].c_str();
     }
+    work_.commit();
     return authors;
 }
 
@@ -55,6 +56,7 @@ SELECT title,
     {
         authors.push_back({ row[0].c_str(), row[1].c_str() });
     }
+    work_.commit();
     return authors;
 }
 
@@ -73,6 +75,7 @@ SELECT title,
     {
         authors.push_back({ row[0].c_str(), row[1].c_str() });
     }
+    work_.commit();
     return authors;
 }
 
