@@ -68,6 +68,20 @@ namespace json_loader {
         jsn = json::serialize(maps_json);
     }
 
+    std::string GetRecordsList(const std::vector<model::PlayerRepositoryAttributes>& players)
+    {
+        json::array players_arr;
+        for (auto& player : players)
+        {
+            json::object player_obj;
+            player_obj["name"] = player.name;
+            player_obj["score"] = player.score;
+            player_obj["playTime"] = player.play_time;
+            players_arr.push_back(player_obj);
+        }
+        return json::serialize(players_arr);
+    }
+
     json::object GetLostObjectsJson(const model::Map* map)
     {
         json::object loot_json;
@@ -328,6 +342,11 @@ namespace json_loader {
             if (auto it = value.as_object().find("defaultBagCapacity"); it != value.as_object().end())
             {
                 game.SetDefBagCapacity(it->value().as_double());
+            }
+
+            if (auto it = value.as_object().find("dogRetirementTime"); it != value.as_object().end())
+            {
+                game.SetRetirementTime(it->value().as_double());
             }
 
             for (int map_inc = 0; map_inc < maps_arr.size(); ++map_inc)

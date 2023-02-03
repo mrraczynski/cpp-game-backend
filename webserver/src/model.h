@@ -7,6 +7,7 @@
 #include <random>
 #include <sstream>
 #include <optional>
+#include <boost/signals2/signal.hpp>
 
 #include "tagged.h"
 #include "loot_generator.h"
@@ -35,7 +36,7 @@ using Coord = Dimension;
 using TimeInterval = std::chrono::milliseconds;
 
 
-constexpr std::string_view Directions[5] = { "U", "L", "D", "R", "" };
+constexpr std::string_view Directions[5] = { "U", "L", "D", "R", "U" };
 
 struct Point {
     Coord x, y;
@@ -96,6 +97,11 @@ public:
     Road(VerticalTag, Point start, Coord end_y) noexcept
         : start_{start}
         , end_{start.x, end_y} {
+    }
+
+    Road(Point start, Point end) noexcept
+        : start_{ start }
+        , end_{ end } {
     }
 
     bool IsHorizontal() const noexcept {
@@ -185,6 +191,10 @@ public:
 
     const std::string& GetName() const noexcept {
         return name_;
+    }
+
+    bool IsRandomSpawnPoints() const noexcept {
+        return randomize_spawn_points_;
     }
 
     const Buildings& GetBuildings() const noexcept {
@@ -313,9 +323,18 @@ public:
 
     Dog() noexcept
         : position_{ Vector2({0,0}) }
-        , dir_{ 0 }
+        , dir_{ 4 }
         , speed_{ Vector2({0,0}) }
         , prev_position_{ Vector2({0,0}) }
+    {
+        //position_ = session_.GetMap().GetRandomPointOnRoad();
+    }
+
+    Dog(Vector2 position, int dir, Vector2 speed, Vector2 prev_position) noexcept
+        : position_{ position }
+        , dir_{ dir }
+        , speed_{ speed }
+        , prev_position_{ prev_position }
     {
         //position_ = session_.GetMap().GetRandomPointOnRoad();
     }
@@ -332,7 +351,7 @@ public:
         return speed_;
     }
 
-    int GetDirection() noexcept
+    int GetDirection() const noexcept
     {
         return dir_;
     }
@@ -400,22 +419,42 @@ public:
     Player(int id, const std::string& name, Vector2 dog_pos, const GameSession* session) noexcept
         : id_{ id }
         , name_{ name }
-        , session_{ session }
+        , session_id_{ session->GetId()}
     { 
         dog_.SetPosition(dog_pos);
     }
 
-    const GameSession* GetSession() const
+    Player(int id, const std::string& name, const GameSession::Id& session_id,
+        const Dog& dog, std::vector<LootObject>&& bag, int cur_bag, int score) noexcept
+        : id_{ id }
+        , name_{ name }
+        , session_id_{ session_id }
+        , dog_{ dog }
+        , bag_{ std::move(bag) }
+        , cur_bag_ { cur_bag }
+        , score_ { score } {}
+
+    const GameSession::Id& GetSessionID() const
     {
-        return session_;
+        return session_id_;
     }
 
-    const std::string& GetName()
+    const Dog& GetDog() const
+    {
+        return dog_;
+    }
+
+    const std::vector<LootObject>& GetBag() const
+    {
+        return bag_;
+    }
+
+    const std::string& GetName() const
     {
         return name_;
     }
 
-    int GetId()
+    int GetId() const
     {
         return id_;
     }
@@ -431,7 +470,7 @@ public:
         cur_bag_++;
     }
 
-    int GetCurrentItemsCount()
+    int GetCurrentItemsCount() const
     {
         return cur_bag_;
     }
@@ -446,9 +485,14 @@ public:
         cur_bag_ = 0;
     }
 
-    int GetScore()
+    int GetScore() const
     {
         return score_;
+    }
+
+    double GetPlayTime() const
+    {
+        return play_time_;
     }
 
     void SetDogDirection(const std::string_view& dir, double speed) const;
@@ -458,16 +502,47 @@ public:
         return dog_;
     }
 
-    void TickPlayer(double delta_time, double game_dog_speed, std::function<const Map* (const Map::Id&)> map_searcher);
+    bool TickPlayer(double delta_time, double game_dog_speed, double dog_retirement_time,
+        std::function<const Map* (const Map::Id&)> map_searcher, std::function<const GameSession* (const GameSession::Id&)> session_searcher);
 
 private:
-    const GameSession* session_;
+
+    bool CheckAFKTimer(double cur_afk_time_ms, double dog_retirement_time_sec)
+    {
+        if (cur_afk_time_ms > dog_retirement_time_sec)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    GameSession::Id session_id_;
     std::string name_;
     int id_;
     mutable Dog dog_;
     std::vector<LootObject> bag_;
     int cur_bag_ = 0;
     int score_ = 0;
+    double afk_time_ = 0;
+    double play_time_ = 0;
+};
+
+struct PlayerRepositoryAttributes
+{
+    std::string name;
+    int score = 0;
+    int play_time = 0;
+};
+
+class PlayerRepository {
+public:
+    virtual void SaveProgress(const Player& player) = 0;
+    virtual std::vector<PlayerRepositoryAttributes> GetProgress(int start, int max_items) const = 0;
+protected:
+    ~PlayerRepository() = default;
 };
 
 namespace detail {
@@ -486,6 +561,11 @@ public:
         return token;
     }
 
+    void AddPlayerWithToken(const Player& player, const std::string& token)
+    {        
+        players_.insert({ token, player });
+    }
+
     void AddItemToPlayer(LootObject obj, int id)
     {
         GetPlayer(id).AddItemToBag(obj);
@@ -498,7 +578,7 @@ public:
 
     const Player* FindPlayerByToken(const Token& token);
 
-    std::vector<Player> GetPlayersBySession(const GameSession* session);
+    std::vector<Player> GetPlayersBySession(const GameSession::Id& session_id);
 
     static PlayerTokens& GetInstance()
     {
@@ -506,7 +586,15 @@ public:
         return instance;
     }
 
-    void TickPlayers(double delta_time, double game_dog_speed, std::function<const Map* (const Map::Id&)> map_searcher);
+    const std::unordered_map<std::string, Player>& GetPlayers()
+    {
+        return players_;
+    }
+
+    void TickPlayers(double delta_time, double game_dog_speed, double dog_retirement_time, 
+        std::function<const Map* (const Map::Id&)> map_searcher, std::function<const GameSession* (const GameSession::Id&)> session_searcher);
+
+    boost::signals2::signal<void(const model::Player& player)> sig;
     
 private:
     std::random_device random_device_;
@@ -558,6 +646,11 @@ public:
         return ++player_id_;
     }
 
+    int GetPlayerCurId() const
+    {
+        return player_id_;
+    }
+
     void AddMap(Map map);
 
     void AddGameSession(GameSession session);
@@ -565,6 +658,16 @@ public:
     void SetDogSpeed(double speed)
     {
         default_dog_speed_ = speed;
+    }
+
+    double GetDefDogSpeed() const
+    {
+        return default_dog_speed_;
+    }
+
+    double GetDefBagCapacity() const
+    {
+        return default_bag_capacity_;
     }
 
     void SetLootPeriod(double loot_period)
@@ -582,12 +685,17 @@ public:
         default_bag_capacity_ = default_bag_capacity;
     }
 
-    double GetLootPeriod()
+    void SetRetirementTime(double dog_retirement_time)
+    {
+        dog_retirement_time_ = dog_retirement_time;
+    }
+
+    double GetLootPeriod() const
     {
         return loot_period_;
     }
 
-    double GetLootProbability()
+    double GetLootProbability() const
     {
         return loot_probability_;
     }
@@ -642,6 +750,7 @@ private:
     int player_id_ = 0;
     double default_dog_speed_ = 1;
     double default_bag_capacity_ = 3;
+    double dog_retirement_time_ = 60;
 
     double loot_period_ = 5.0f;
     double loot_probability_ = .5f;

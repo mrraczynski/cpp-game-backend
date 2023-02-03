@@ -78,6 +78,19 @@ namespace http_handler {
         }
     }
 
+    bool ApiHandler::IsRecordsRequest(const std::vector<std::string>& target_vec)
+    {
+        if (target_vec.size() == 5)
+        {
+            return IsGameRequest(target_vec) &&
+                target_vec[4].compare("records") == 0;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     bool ApiHandler::IsGameJoinRequest(const std::vector<std::string>& target_vec)
     {
         if (target_vec.size() == 5)

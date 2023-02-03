@@ -1,5 +1,6 @@
 #pragma once
 #include "ticker.h"
+#include "postgres.h"
 
 #define BOOST_BEAST_USE_STD_STRING_VIEW
 
@@ -53,7 +54,8 @@ namespace http_handler {
         ApiHandler& operator=(const ApiHandler&) = delete;  
 
         template <typename Body, typename Allocator, typename Send>
-        void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const std::vector<std::string>& target_vec, bool is_accepting_tick)
+        void HandleAPIRequest(http::request<Body, http::basic_fields<Allocator>>&& req, Send&& send, const postgres::Database& db, const std::vector<std::string>& target_vec, bool is_accepting_tick,
+            std::optional<std::function<void()>>& save_func)
         {
             try {
                 if (IsGameJoinRequest(target_vec))
@@ -78,7 +80,12 @@ namespace http_handler {
                 }
                 else if (IsTimeTickRequest(target_vec))
                 {
-                    send(HandleTimeTickRequest(req, is_accepting_tick));
+                    send(HandleTimeTickRequest(req, is_accepting_tick, save_func));
+                    return;
+                }
+                else if (IsRecordsRequest(target_vec))
+                {
+                    send(HandleRecordsRequest(req, db));
                     return;
                 }
                 else
@@ -255,7 +262,7 @@ namespace http_handler {
                     json_loader::GetErrorJson(body_str, "unknownToken", "Player token has not been found");
                     return ResponsePostRequest(req, body_str, http::status::unauthorized, ContentType::APPLICATION_JSON, "no-cache"sv);
                 }
-                std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player->GetSession());
+                std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player->GetSessionID());
 
                 std::string body_str = json_loader::CreatePlayersArray(session_players);
                 return ResponsePostRequest(req, body_str, http::status::ok, ContentType::APPLICATION_JSON, "no-cache"sv);
@@ -263,7 +270,7 @@ namespace http_handler {
         }
 
         template <typename Body, typename Allocator>
-        StringResponse HandleTimeTickRequest(const http::request<Body, http::basic_fields<Allocator>>& req, bool is_accepting_tick)
+        StringResponse HandleTimeTickRequest(const http::request<Body, http::basic_fields<Allocator>>& req, bool is_accepting_tick, std::optional<std::function<void()>>& save_func)
         {
             if (!is_accepting_tick)
             {
@@ -296,6 +303,11 @@ namespace http_handler {
                 std::string body_str;
                 json_loader::GetErrorJson(body_str, "invalidArgument", "Failed to parse action");
                 return ResponsePostRequest(req, body_str, http::status::bad_request, ContentType::APPLICATION_JSON, "no-cache"sv);
+            }
+            if (save_func != std::nullopt)
+            {
+                auto& func = save_func.value();
+                func();
             }
             game_.TickGame(time_delta);
             std::string body_str = json_loader::GetEmptyObject();
@@ -399,6 +411,58 @@ namespace http_handler {
             }
         }
 
+        template <typename Body, typename Allocator>
+        StringResponse HandleRecordsRequest(const http::request<Body, http::basic_fields<Allocator>>& req, const postgres::Database& db)
+        {
+            if (req.method() != http::verb::get && req.method() != http::verb::head)
+            {
+                std::string body_str;
+                json_loader::GetErrorJson(body_str, "invalidMethod", "Invalid method");
+                return ResponsePostRequest(req, body_str, http::status::method_not_allowed, ContentType::APPLICATION_JSON, "no-cache"sv, "GET, HEAD"sv);
+            }
+
+            json::value body_json;
+            json::object obj;
+            int start = 0;
+            int max_items = 0;
+
+            if (req.payload_size().has_value() && req.payload_size().value() > 0)
+            {
+                try
+                {
+                    body_json = json::parse(req.body());
+                    obj = body_json.as_object();
+                    if (auto it = obj.find("start"); it != obj.end())
+                    {
+                        start = obj["start"].as_int64();
+                    }
+                    if (auto it = obj.find("maxItems"); it != obj.end())
+                    {
+                        max_items = obj["maxItems"].as_int64();
+                    }
+                    if (start > 100 || max_items > 100)
+                    {
+                        std::string body_str;
+                        json_loader::GetErrorJson(body_str, "invalidArgument", "Too big start or maxItems");
+                        return ResponsePostRequest(req, body_str, http::status::bad_request, ContentType::APPLICATION_JSON, "no-cache"sv);
+                    }
+                }
+                catch (std::exception& e)
+                {
+                    std::string body_str;
+                    json_loader::GetErrorJson(body_str, "invalidArgument", "Failed to parse body");
+                    return ResponsePostRequest(req, body_str, http::status::bad_request, ContentType::APPLICATION_JSON, "no-cache"sv);
+                }
+            }
+
+            start = start == 0 ? 1 : start;
+            max_items = max_items == 0 ? 100 : max_items;
+
+            auto records = db.GetProgress(start, max_items);
+            std::string records_list = json_loader::GetRecordsList(records);
+            return ResponsePostRequest(req, records_list, http::status::ok, ContentType::APPLICATION_JSON, "no-cache"sv);
+        }
+
         bool IsApiRequest(const std::vector<std::string>& target_vec);
 
         bool IsMapsRequest(const std::vector<std::string>& target_vec);
@@ -414,6 +478,8 @@ namespace http_handler {
         bool IsPlayerActionRequest(const std::vector<std::string>& target_vec);
 
         bool IsTimeTickRequest(const std::vector<std::string>& target_vec);
+
+        bool IsRecordsRequest(const std::vector<std::string>& target_vec);
 
         bool HasMapID(const std::vector<std::string>& target_vec);
 
