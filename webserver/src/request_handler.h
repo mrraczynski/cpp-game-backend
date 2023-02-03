@@ -1,23 +1,33 @@
 #pragma once
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+
 #include "api_handler.h"
 
 namespace http_handler {
 
 class RequestHandler : public std::enable_shared_from_this<RequestHandler> {
 public:
-    explicit RequestHandler(model::Game& game, fs::path static_dir, net::io_context& ioc, std::optional<int> tick_period)
-        : game_{ game }, static_dir_{ static_dir }, ioc_{ ioc }  
+    explicit RequestHandler(model::Game& game, const postgres::Database& db, fs::path static_dir, net::io_context& ioc, std::optional<int> tick_period,
+        std::optional<std::function<void()>> save_func, std::optional<int> save_state_period = std::nullopt)
+        : game_{ game }, static_dir_{ static_dir }, ioc_{ ioc }, save_func_{ save_func }, db_ { db }
     {
         if (tick_period)
         {
             std::function<void(std::chrono::milliseconds)> tick_func = [&](std::chrono::milliseconds delta_time) {
                 TickerHandler(delta_time);
             };
-            ticker_ptr = std::make_shared<Ticker>(strand_, std::chrono::milliseconds(tick_period.value()), tick_func);
+            std::optional<std::chrono::milliseconds> save_state_period_mil;
+            if (save_state_period != std::nullopt)
+            {
+                save_state_period_mil = std::chrono::milliseconds(save_state_period.value());
+            }
+            ticker_ptr = std::make_shared<Ticker>(strand_, std::chrono::milliseconds(tick_period.value()), tick_func, 
+                save_func, save_state_period_mil);
             ticker_ptr->Start();
         }
         else
-        {
+        {            
             accept_tick_request = true;
         }
     }
@@ -41,24 +51,7 @@ public:
             else
             {   
                 std::shared_ptr<ApiHandler> api_handler = api_handler_;                // Все запросы к API выполняются последовательно внутри strand
-                bool is_accepting_tick = accept_tick_request;
-                api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec, is_accepting_tick);
-                /*http::request<Body, http::basic_fields<Allocator>> req_obj = req;
-                BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
-                    {
-                        {"code", -100},
-                        {"text", req_obj.version()},
-                        {"where", "operator() before lambda"}
-                    })) << std::this_thread::get_id();
-                return net::dispatch(strand_, [&] {
-                    BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
-                        {
-                            {"code", -100},
-                            {"text", req_obj.version()},
-                            {"where", "operator() lambda"}
-                        })) << std::this_thread::get_id();
-                    api_handler->HandleAPIRequest(req_obj, std::move(send), target_vec, is_accepting_tick);
-                    });*/
+                api_handler->HandleAPIRequest(std::move(req), std::move(send), db_, target_vec, accept_tick_request, save_func_);
             }
         }
         catch (std::exception& e)
@@ -162,6 +155,10 @@ private:
     bool accept_tick_request = false;
 
     std::vector<std::string> target_vec;
+
+    std::optional<std::function<void()>> save_func_;
+
+    const postgres::Database& db_;
 
 };
 

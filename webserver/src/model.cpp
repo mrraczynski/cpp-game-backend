@@ -182,12 +182,13 @@ std::string Game::GetCurrentGameState(const std::string_view& token, std::string
         return body_str;
     }
     std::string body_str;    
-    auto map = FindMap(player->GetSession()->GetMapId());    
-    std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player->GetSession());
-    for (auto& player : session_players)
+    auto session = FindGameSession(player->GetSessionID());
+    auto map = FindMap(session->GetMapId());
+    std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player->GetSessionID());
+    /*for (auto& player : session_players)
     {
         std::cout << "Dog " << player.GetId() << " speed is: x = " << player.GetDog().GetSpeed().x << " y = " << player.GetDog().GetSpeed().y;
-    }
+    }*/
     return json_loader::CreatePlayersWithParametersArray(session_players, map);
 }
 
@@ -220,10 +221,12 @@ void Player::SetDogDirection(const std::string_view& dir, double speed) const
     }
 }
 
-void Player::TickPlayer(double delta_time, double game_dog_speed, std::function<const Map* (const Map::Id&)> map_searcher)
+bool Player::TickPlayer(double delta_time, double game_dog_speed, double dog_retirement_time,
+    std::function<const Map* (const Map::Id&)> map_searcher, std::function<const GameSession* (const GameSession::Id&)> session_searcher)
 {
-    const std::optional<double>& session_dog_speed = session_->GetDogSpeed();
-    const Map* map = map_searcher(session_->GetMapId());
+    auto session = session_searcher(session_id_);
+    const std::optional<double>& session_dog_speed = session->GetDogSpeed();
+    const Map* map = map_searcher(session->GetMapId());
     if (session_dog_speed != std::nullopt)
     {
         double speed_x = session_dog_speed.value() * delta_time;
@@ -239,7 +242,7 @@ void Player::TickPlayer(double delta_time, double game_dog_speed, std::function<
         }
         else
         {
-            //SetDogDirection(""sv, 0);
+            //SetDogDirection(""sv, 0);            
             dog_.SetSpeed(Vector2{ 0, 0 });
         }
     }
@@ -262,13 +265,32 @@ void Player::TickPlayer(double delta_time, double game_dog_speed, std::function<
             dog_.SetSpeed(Vector2{ 0, 0 });
         }
     }
+    if (dog_.GetDirection() == 4)
+    {
+        afk_time_ += delta_time;
+        play_time_ += delta_time;
+        if (CheckAFKTimer(afk_time_, dog_retirement_time))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    else
+    {
+        afk_time_ = 0;
+        play_time_ += delta_time;
+        return true;
+    }
 }
 
 void Game::SetPlayerDir(const std::string_view& token, const std::string_view& dir)
 {
     int player_ec;
     const model::Player* player = model::PlayerTokens::GetInstance().FindPlayerByToken(model::Token(std::string(token)));
-    std::optional<double> def_speed = FindMap(player->GetSession()->GetMapId())->GetDogSpeed();
+    std::optional<double> def_speed = FindMap(FindGameSession(player->GetSessionID())->GetMapId())->GetDogSpeed();
     if (def_speed != std::nullopt)
     {
         player->SetDogDirection(dir, def_speed.value());
@@ -282,9 +304,12 @@ void Game::SetPlayerDir(const std::string_view& token, const std::string_view& d
 void Game::TickGame(double time_delta)
 {
     double delta_time_sec = time_delta / 1000;
-    PlayerTokens::GetInstance().TickPlayers(delta_time_sec, default_dog_speed_,
+    PlayerTokens::GetInstance().TickPlayers(delta_time_sec, default_dog_speed_, dog_retirement_time_,
         [&](const Map::Id& id) {
             return FindMap(id);
+        },
+        [&](const GameSession::Id& id) {
+            return FindGameSession(id);
         });
     CheckCollisions();
     GenerateLoot(TimeInterval((int)time_delta));
@@ -294,7 +319,7 @@ void Game::GenerateLoot(TimeInterval time_delta)
 {
     for (auto& session : sessions_)
     {
-        int looter_count = PlayerTokens::GetInstance().GetPlayersBySession(&session).size();
+        int looter_count = PlayerTokens::GetInstance().GetPlayersBySession(session.GetId()).size();
         auto map = FindMap(session.GetMapId());
         if (map != nullptr)
         {
@@ -309,7 +334,7 @@ void Game::CheckCollisions()
 {
     for (auto& session : sessions_)
     {
-        auto players = PlayerTokens::GetInstance().GetPlayersBySession(&session);
+        auto players = PlayerTokens::GetInstance().GetPlayersBySession(session.GetId());
         std::vector<Gatherer> gatherers;
         for (size_t it = 0; it < players.size(); it++)
         {
@@ -397,12 +422,12 @@ void Game::CheckCollisions()
     }
 }
 
-std::vector<Player> PlayerTokens::GetPlayersBySession(const GameSession* session)
+std::vector<Player> PlayerTokens::GetPlayersBySession(const GameSession::Id& session_id)
 {
     std::vector<Player> session_players;
     for (auto& player : players_)
     {
-        if (player.second.GetSession()->GetId() == session->GetId())
+        if (player.second.GetSessionID() == session_id)
         {
             session_players.push_back(player.second);
         }
@@ -419,11 +444,24 @@ const Player* PlayerTokens::FindPlayerByToken(const Token& token)
     return nullptr;
 }
 
-void PlayerTokens::TickPlayers(double delta_time, double game_dog_speed, std::function<const Map* (const Map::Id&)> map_searcher)
+void PlayerTokens::TickPlayers(double delta_time, 
+    double game_dog_speed, double dog_retirement_time,
+    std::function<const Map* (const Map::Id&)> map_searcher, 
+    std::function<const GameSession* (const GameSession::Id&)> session_searcher)
 {
+    std::vector<std::string> players_for_removal;
     for (auto& player : players_)
     {
-        player.second.TickPlayer(delta_time, game_dog_speed, map_searcher);
+        bool is_player_active = player.second.TickPlayer(delta_time, game_dog_speed, dog_retirement_time, map_searcher, session_searcher);
+        if (!is_player_active)
+        {
+            players_for_removal.push_back(player.first);
+        }
+    }
+    for (auto& player_id : players_for_removal)
+    {
+        sig(players_.at(player_id));
+        players_.erase(player_id);
     }
 }
 
