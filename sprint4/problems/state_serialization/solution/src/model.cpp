@@ -185,10 +185,6 @@ std::string Game::GetCurrentGameState(const std::string_view& token, std::string
     auto session = FindGameSession(player->GetSessionID());
     auto map = FindMap(session->GetMapId());
     std::vector<model::Player> session_players = model::PlayerTokens::GetInstance().GetPlayersBySession(player->GetSessionID());
-    for (auto& player : session_players)
-    {
-        std::cout << "Dog " << player.GetId() << " speed is: x = " << player.GetDog().GetSpeed().x << " y = " << player.GetDog().GetSpeed().y;
-    }
     return json_loader::CreatePlayersWithParametersArray(session_players, map);
 }
 
