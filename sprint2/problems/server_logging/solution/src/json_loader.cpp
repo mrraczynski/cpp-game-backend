@@ -1,4 +1,6 @@
+#pragma once
 #include "json_loader.h"
+#include "logger.h"
 #define BOOST_BEAST_USE_STD_STRING_VIEW
 
 namespace json_loader {
@@ -121,7 +123,11 @@ namespace json_loader {
         }
         catch (std::exception& e)
         {
-            std::cerr << "json_loader.cpp/GetJson: "sv << e.what() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"code", "EXIT_FAILURE"},
+                    {"exception", e.what()}
+                })) << "json_loader.cpp/GetJson"sv;
         }
     }
 
@@ -140,7 +146,11 @@ namespace json_loader {
         }
         catch (std::exception& e)
         {
-            std::cerr << "json_loader.cpp/ParseBuildings: "sv << e.what() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"code", "EXIT_FAILURE"},
+                    {"exception", e.what()}
+                })) << "json_loader.cpp/ParseOffices"sv;
         }
     }
 
@@ -158,7 +168,11 @@ namespace json_loader {
         }
         catch (std::exception& e)
         {
-            std::cerr << "json_loader.cpp/ParseBuildings: "sv << e.what() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"code", "EXIT_FAILURE"},
+                    {"exception", e.what()}
+                })) << "json_loader.cpp/ParseBuildings"sv;
         }
     }
 
@@ -183,7 +197,11 @@ namespace json_loader {
         }
         catch (std::exception& e)
         {
-            std::cerr << "json_loader.cpp/ParseRoads: "sv << e.what() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"code", "EXIT_FAILURE"},
+                    {"exception", e.what()}
+                })) << "json_loader.cpp/ParseRoads"sv;
         }
     }
 
@@ -216,9 +234,13 @@ namespace json_loader {
                 game.AddMap(map);
             }
         }
-        catch (std::exception& e)
+        catch (std::exception& ex)
         {
-            std::cerr << "json_loader.cpp/LoadGame: "sv << e.what() << std::endl;
+            BOOST_LOG_TRIVIAL(info) << boost::log::add_value(logger::additional_data, boost::json::value(
+                {
+                    {"code", "EXIT_FAILURE"},
+                    {"exception", ex.what()}
+                })) << "json_loader.cpp/LoadGame"sv;
         }
         return game;
     }
