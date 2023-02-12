@@ -38,7 +38,7 @@ int main(int argc, const char* argv[]) {
         logger::InitBoostLog();
 
         // 1. Загружаем карту из файла и построить модель игры
-        model::Game game = json_loader::LoadGame("E:/Projects/GitHub/cpp-game-backend/sprint2/problems/move_players/precode/data/config.json"/*argv[1]*/ );
+        model::Game game = json_loader::LoadGame("E:/GitHub/cpp-game-backend/sprint2/problems/move_players/precode/data/config.json"/*argv[1]*/ );
 
         // 2. Инициализируем io_context
         const unsigned num_threads = std::thread::hardware_concurrency();
@@ -60,7 +60,7 @@ int main(int argc, const char* argv[]) {
 
         // 4. Создаём обработчик HTTP-запросов и связываем его с моделью игры
         std::shared_ptr<http_handler::RequestHandler> handler = std::make_shared<http_handler::RequestHandler>(game, 
-            "E:/Projects/GitHub/cpp-game-backend/sprint2/problems/move_players/precode/static/"/* argv[2]*/, 
+            "E:/GitHub/cpp-game-backend/sprint2/problems/move_players/precode/static/"/* argv[2]*/, 
             ioc);
 
         // 5. Запустить обработчик HTTP-запросов, делегируя их обработчику запросов

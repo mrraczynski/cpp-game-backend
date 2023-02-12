@@ -112,12 +112,13 @@ namespace http_handler {
         }
 
         template <typename Body, typename Allocator>
-        StringResponse ResponseAllMaps(http::request<Body, http::basic_fields<Allocator>> req)
+        StringResponse ResponseAllMaps(http::request<Body, http::basic_fields<Allocator>> req, const std::string_view& cache_control = "no-cache"sv)
         {
             StringResponse response = StringResponse(http::status::ok, req.version());
             response.set(http::field::content_type, ContentType::APPLICATION_JSON);
             json_loader::GetMapsJson(response.body(), game_);
             response.content_length(response.body().size());
+            response.set(http::field::cache_control, cache_control);
             return response;
         }
 
