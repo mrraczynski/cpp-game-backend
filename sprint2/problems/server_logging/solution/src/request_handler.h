@@ -202,7 +202,7 @@ private:
                 /*StringResponse resp = ResponseError(req, ContentType::TEXT_PLAIN, http::status::not_found, "fileNotFound", "File not found");
                 send(StringResponce(resp));
                 return resp;*/
-                send(ResponseError(req, ContentType::TEXT_HTML, http::status::not_found, "fileNotFound", "File not found"));
+                send(ResponseError(req, ContentType::TEXT_PLAIN, http::status::not_found, "fileNotFound", "File not found"));
                 return;
             }
             else
