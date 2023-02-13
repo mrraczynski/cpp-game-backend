@@ -41,6 +41,9 @@ namespace http_handler {
         constexpr static std::string_view IMAGE_SVG = "image/svg+xml"sv;
         constexpr static std::string_view AUDIO_MPEG = "audio/mpeg"sv;
         constexpr static std::string_view FOLDER = "folder"sv;
+        constexpr static std::string_view MODEL_FBX = "model/obj"sv;
+        constexpr static std::string_view MODEL_OBJ = "model/obj"sv;
+        constexpr static std::string_view WEBMANIFEST = "application/manifest+json"sv;
         // При необходимости внутрь ContentType можно добавить и другие типы контента
     };
    

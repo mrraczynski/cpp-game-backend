@@ -135,7 +135,18 @@ namespace http_handler {
                 {
                     return std::pair<bool, const std::string_view&>(true, ContentType::AUDIO_MPEG);
                 }
-
+                else if (std::strcmp(&decoded_path[pos], ".fbx") == 0)
+                {
+                    return std::pair<bool, const std::string_view&>(true, ContentType::MODEL_FBX);
+                }
+                else if (std::strcmp(&decoded_path[pos], ".obj") == 0)
+                {
+                    return std::pair<bool, const std::string_view&>(true, ContentType::MODEL_OBJ);
+                }
+                else if (std::strcmp(&decoded_path[pos], ".webmanifest") == 0)
+                {
+                    return std::pair<bool, const std::string_view&>(true, ContentType::WEBMANIFEST);
+                }
             }
             else if (decoded_path[pos] == '/' || decoded_path[pos] == '\\')
             {
