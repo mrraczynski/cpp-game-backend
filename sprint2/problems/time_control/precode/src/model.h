@@ -380,17 +380,17 @@ public:
             double speed_x = session_dog_speed.value() * delta_time;
             double speed_y = session_dog_speed.value() * delta_time;
             Vector2 new_pos{
-                dog_.GetPosition().x + session_dog_speed.value() * delta_time,
-                dog_.GetPosition().y + session_dog_speed.value() * delta_time
+                dog_.GetPosition().x + dog_.GetSpeed().x * delta_time,
+                dog_.GetPosition().y + dog_.GetSpeed().y * delta_time
             };
             if (map->IsCoordinatesOnRoads(new_pos))
             {
                 dog_.SetPosition(new_pos);
-                dog_.SetSpeed(Vector2{ speed_x, speed_y });
+                //dog_.SetSpeed(Vector2{ speed_x, speed_y });
             }
             else
             {
-                SetDogDirection(""sv, 0);
+                //SetDogDirection(""sv, 0);            
                 dog_.SetSpeed(Vector2{ 0, 0 });
             }
         }
@@ -399,17 +399,17 @@ public:
             double speed_x = game_dog_speed * delta_time;
             double speed_y = game_dog_speed * delta_time;
             Vector2 new_pos{
-                dog_.GetPosition().x * game_dog_speed * delta_time,
-                dog_.GetPosition().y * game_dog_speed * delta_time
+            dog_.GetPosition().x + dog_.GetSpeed().x * delta_time,
+            dog_.GetPosition().y + dog_.GetSpeed().y * delta_time
             };
             if (map->IsCoordinatesOnRoads(new_pos))
             {
                 dog_.SetPosition(new_pos);
-                dog_.SetSpeed(Vector2{ speed_x, speed_y });
+                //dog_.SetSpeed(Vector2{ speed_x, speed_y });
             }
             else
             {
-                SetDogDirection(""sv, 0);
+                //SetDogDirection(""sv, 0);
                 dog_.SetSpeed(Vector2{ 0, 0 });
             }
         }
