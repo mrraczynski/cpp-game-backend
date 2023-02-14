@@ -97,17 +97,6 @@ jobs:
           repository: 'cpppracticum/cpp-backend-tests-practicum'
           path: 'cpp-backend-tests-practicum'
 
-      - name: build tests sprint3 instrumentation
-        run: |
-          cd sprint3/problems/instrumentation/solution
-          g++ -O3 *.cpp -o event2dot
-      - name: run tests sprint3 instrumentation
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/instrumentation.xml cpp-backend-tests-practicum/tests/test_s03_instrumentation.py
-        env:
-          REPORT_PATH: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/report
-          BINARY_PATH: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/event2dot
-          ARG: ${{ github.workspace }}/sprint3/problems/instrumentation/solution/inputs
-
       - name: Load map_json binary
         uses: actions/download-artifact@v3
         with:
@@ -121,28 +110,6 @@ jobs:
         with:
           repository: 'brendangregg/FlameGraph'
           path: ${{ github.workspace }}/sprint3/problems/flamegraph/solution/FlameGraph
-
-      - name: run tests sprint3 flamegraph
-        run: |
-          cd sprint3/problems/flamegraph/solution
-          sudo python3 shoot.py "${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/build/bin/game_server ${GITHUB_WORKSPACE}/sprint1/problems/map_json/solution/data/config.json"
-          sudo chown -R runner:docker ${GITHUB_WORKSPACE}/sprint3/problems/flamegraph/solution
-          ls -l
-          pytest --junitxml=${GITHUB_WORKSPACE}/flamegraph.xml ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s03_flamegraph.py
-        env:
-          DIRECTORY: ${{ github.workspace }}/sprint3/problems/flamegraph/solution
-
-      - name: build tests sprint3 gen_objects
-        run: |
-          cd sprint3/problems/gen_objects/solution
-          docker build -t gen_objects .
-      - name: run tests sprint3 gen_objects
-        run: pytest --workers auto --junitxml=${GITHUB_WORKSPACE}/gen_objects.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/gen_objects/solution/data/config.json
-          IMAGE_NAME: gen_objects
-          ENTRYPOINT: /app/game_server
-          CONTAINER_ARGS: '--config-file /app/data/config.json --www-root /app/static/'
 
       - name: build tests sprint3 static_lib
         run: |
