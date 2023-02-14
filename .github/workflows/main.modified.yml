@@ -30,6 +30,32 @@ jobs:
         run: |
           cp -R /home/forconan/.conan /github/home/.conan
 
+      - name: build tests sprint1 map_json
+        run: |
+          cd sprint1/problems/map_json/solution
+          mkdir build
+          cd build
+          conan install ..
+          cmake ..
+          cmake --build .
+          echo "COMMAND_RUN=${DELIVERY_APP} ${CONFIG_PATH}" >> $GITHUB_ENV
+        env:
+          DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
+          CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/map_json/solution/data/config.json
+
+      - name: Save map_json binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: game_server
+          path: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
+          retention-days: 1
+
+      - name: run tests sprint1 map_json
+        run: pytest --junitxml=${GITHUB_WORKSPACE}/map_json.xml cpp-backend-tests-practicum/tests/test_l04_map_json.py
+        env:
+          DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
+          CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/map_json/solution/data/config.json
+
       - name: build tests sprint2 command_line
         run: |
           cd sprint2/problems/command_line/solution
