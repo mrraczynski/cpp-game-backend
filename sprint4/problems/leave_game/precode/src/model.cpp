@@ -103,8 +103,7 @@ std::optional<Road> Map::GetRandomRoad() const noexcept
     {
         std::random_device dev;
         std::uniform_int_distribution<int> dist(1, roads_.size());
-        //return roads_[dist(dev) - 1];
-        return roads_[0];
+        return roads_[dist(dev) - 1];
     }
     else
     {
@@ -324,6 +323,10 @@ void Game::GenerateLoot(TimeInterval time_delta)
         if (map != nullptr)
         {
             int loot_count = map->GetCurrentLootCount();
+            if (loot_count > 1)
+            {
+                int k = 1;
+            }
             unsigned count = loot_generator_.Generate(time_delta, loot_count, looter_count);
             map->CreateLootObjects(count);
         }
@@ -416,7 +419,9 @@ void Game::CheckCollisions()
         {
             for (auto& ig : office_events)
             {
-                PlayerTokens::GetInstance().CollectPlayerLoot(players[ig.gatherer_id].GetId());
+                auto& player = players[ig.gatherer_id];
+                PlayerTokens::GetInstance().CollectPlayerLoot(player.GetId());                
+                FindMap(FindGameSession(player.GetSessionID())->GetMapId())->DecreaseLootCount();
             }
         }
     }

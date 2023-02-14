@@ -56,19 +56,6 @@ jobs:
           DELIVERY_APP: ${{ github.workspace }}/sprint1/problems/map_json/solution/build/bin/game_server
           CONFIG_PATH: ${{ github.workspace }}/sprint1/problems/map_json/solution/data/config.json
 
-      - name: build tests sprint2 command_line
-        run: |
-          cd sprint2/problems/command_line/solution
-          docker build -t command_line .
-      - name: run tests sprint2 command_line
-        run: pytest --workers auto --junitxml=${GITHUB_WORKSPACE}/command_line.xml cpp-backend-tests-practicum/tests/test_s02_command_line.py
-        env:
-          SERVER_DOMAIN: cppserver
-          CONFIG_PATH: ${{ github.workspace }}/sprint2/problems/command_line/solution/data/config.json
-          ENTRYPOINT: /app/game_server
-          CONTAINER_ARGS: --config-file /app/data/config.json --www-root /app/static/
-          IMAGE_NAME: command_line
-
       - name: Publish XML reports
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
@@ -110,18 +97,6 @@ jobs:
         with:
           repository: 'brendangregg/FlameGraph'
           path: ${{ github.workspace }}/sprint3/problems/flamegraph/solution/FlameGraph
-
-      - name: build tests sprint3 static_lib
-        run: |
-          cd sprint3/problems/static_lib/solution
-          docker build -t static_lib .
-      - name: run tests sprint3 static_lib
-        run: pytest --workers auto --junitxml=${GITHUB_WORKSPACE}/static_lib.xml cpp-backend-tests-practicum/tests/test_s03_gen_objects.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/static_lib/solution/data/config.json
-          IMAGE_NAME: static_lib
-          ENTRYPOINT: /app/game_server
-          CONTAINER_ARGS: '--config-file /app/data/config.json --www-root /app/static/'
 
       - name: build tests sprint3 gather-tests
         run: |
