@@ -222,7 +222,7 @@ public:
         double tmp_x = road.GetStart().x;
         double tmp_y = road.GetStart().y;
         //return Vector2({ mod_x, mod_y });
-        return Vector2{ tmp_x, tmp_y };
+        return Vector2{ mod_x, mod_y };
     }
 
     bool IsCoordinatesOnRoads(Vector2 coord) const

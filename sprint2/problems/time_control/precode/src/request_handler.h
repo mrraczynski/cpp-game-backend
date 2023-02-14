@@ -28,10 +28,7 @@ public:
             {   
                 std::shared_ptr<ApiHandler> api_handler = api_handler_;
                 // Все запросы к API выполняются последовательно внутри strand
-                return net::dispatch(strand_, [&api_handler, &req, &send, &target_vec] {
-                    api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec);
-                    });
-
+                api_handler->HandleAPIRequest(std::move(req), std::move(send), target_vec);
             }
         }
         catch (std::exception& e)
