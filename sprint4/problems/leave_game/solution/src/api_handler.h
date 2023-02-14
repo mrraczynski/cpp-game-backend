@@ -104,7 +104,7 @@ namespace http_handler {
         std::vector<std::string_view> SplitRequest(const std::string_view target);
 
         template <typename Body, typename Allocator>
-        StringResponse ResponseMapById(http::request<Body, http::basic_fields<Allocator>> req, const model::Map* map)
+        StringResponse ResponseMapById(http::request<Body, http::basic_fields<Allocator>> req, const model::Map* map, const std::string_view& cache_control = "no-cache"sv)
         {
             StringResponse response = StringResponse(http::status::ok, req.version());
             response.set(http::field::content_type, ContentType::APPLICATION_JSON);
@@ -113,11 +113,12 @@ namespace http_handler {
                 json_loader::GetMapJson(response.body(), map);
             }
             response.content_length(response.body().size());
+            response.set(http::field::cache_control, cache_control);
             return response;
         }
 
         template <typename Body, typename Allocator>
-        StringResponse ResponseAllMaps(http::request<Body, http::basic_fields<Allocator>> req)
+        StringResponse ResponseAllMaps(http::request<Body, http::basic_fields<Allocator>> req, const std::string_view& cache_control = "no-cache"sv)
         {
             StringResponse response = StringResponse(http::status::ok, req.version());
             response.set(http::field::content_type, ContentType::APPLICATION_JSON);
@@ -126,6 +127,7 @@ namespace http_handler {
                 json_loader::GetMapsJson(response.body(), game_);
             }
             response.content_length(response.body().size());
+            response.set(http::field::cache_control, cache_control);
             return response;
         }
 

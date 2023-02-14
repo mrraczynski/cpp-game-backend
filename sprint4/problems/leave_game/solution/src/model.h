@@ -122,8 +122,12 @@ public:
 
     bool IsCoordinatesOnRoad(Vector2 coord) const
     {
-        return (coord.x >= (start_.x - 0.4) && coord.x <= (end_.x + 0.4))
-            && (coord.y >= (start_.y - 0.4) && coord.y <= (end_.y + 0.4));
+        auto road_start_x = end_.x >= start_.x ? start_.x : end_.x;
+        auto road_start_y = end_.y >= start_.y ? start_.y : end_.y;
+        auto road_end_x = end_.x >= start_.x ? end_.x : start_.x;
+        auto road_end_y = end_.y >= start_.y ? end_.y : start_.y;
+        return (coord.x >= (road_start_x - 0.4) && coord.x <= (road_end_x + 0.4))
+            && (coord.y >= (road_start_y - 0.4) && coord.y <= (road_end_y + 0.4));
     }
 
 private:
@@ -212,6 +216,11 @@ public:
     int GetCurrentLootCount() const noexcept
     {
         return cur_loot_count_;
+    }
+
+    void DecreaseLootCount() const noexcept
+    {
+        cur_loot_count_--;
     }
 
     void AddRoad(const Road& road) {
