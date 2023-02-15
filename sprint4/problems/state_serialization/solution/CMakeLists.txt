@@ -9,8 +9,6 @@ conan_basic_setup(TARGETS)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-add_compile_options(/bigobj)
-
 add_library(model_lib STATIC 
 	src/model.h
     src/model.cpp
