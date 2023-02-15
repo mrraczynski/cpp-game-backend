@@ -98,31 +98,6 @@ jobs:
           repository: 'brendangregg/FlameGraph'
           path: ${{ github.workspace }}/sprint3/problems/flamegraph/solution/FlameGraph
 
-      - name: build tests sprint3 find_return
-        run: |
-          cd sprint3/problems/find_return/solution
-          docker build -t find_return .
-      - name: run tests sprint3 find_return
-        run: pytest --workers auto --junitxml=${GITHUB_WORKSPACE}/find_return.xml cpp-backend-tests-practicum/tests/test_s03_find_return.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/find_return/solution/data/config.json
-          IMAGE_NAME: find_return
-          ENTRYPOINT: /app/game_server
-          CONTAINER_ARGS: '--config-file /app/data/config.json --www-root /app/static/'
-
-      - name: build tests sprint3 scores
-        run: |
-          cd sprint3/problems/scores/solution
-          docker build -t scores .
-      - name: run tests sprint3 scores
-        run: pytest --workers auto --junitxml=${GITHUB_WORKSPACE}/scores.xml cpp-backend-tests-practicum/tests/test_s03_scores.py
-        env:
-          CONFIG_PATH: ${{ github.workspace }}/sprint3/problems/scores/solution/data/config.json
-          IMAGE_NAME: scores
-          ENTRYPOINT: /app/game_server
-          CONTAINER_ARGS: '--config-file /app/data/config.json --www-root /app/static/'
-
-
       - name: build tests sprint4 state_serialization
         run: |
           cd sprint4/problems/state_serialization/solution

@@ -9,12 +9,12 @@ conan_basic_setup(TARGETS)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-add_executable(db_of_books src/main.cpp
+add_executable(book_manager src/main.cpp
 						   src/json_parser.h
 						   src/json_parser.cpp
 						   src/db_command.h
 						   src/db_command.cpp
 						   src/book.h)
-target_link_libraries(db_of_books PUBLIC CONAN_PKG::libpqxx) 
-target_include_directories(db_of_books PUBLIC CONAN_PKG::boost)
-target_link_libraries(db_of_books PUBLIC CONAN_PKG::boost)
+target_link_libraries(book_manager PUBLIC CONAN_PKG::libpqxx) 
+target_include_directories(book_manager PUBLIC CONAN_PKG::boost)
+target_link_libraries(book_manager PUBLIC CONAN_PKG::boost)
