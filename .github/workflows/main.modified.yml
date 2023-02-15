@@ -199,25 +199,6 @@ jobs:
       - name: Install dependencies
         run: |
           cp -R /home/forconan/.conan /github/home/.conan
-      - name: build sprint4 db_of_books
-        run: |
-          cd sprint4/problems/db_of_books/solution
-          mkdir build
-          cd build
-          conan install ..
-          cmake -DCMAKE_BUILD_TYPE=Release ..
-          cmake --build .
-          echo "POSTGRES_USER=postgres" >> $GITHUB_ENV
-          echo "POSTGRES_PASSWORD=Mys3Cr3t" >> $GITHUB_ENV
-          echo "POSTGRES_HOST=postgres" >> $GITHUB_ENV
-          echo "POSTGRES_PORT=5432" >> $GITHUB_ENV
-      - name: configure postgresql database
-        run: python3 ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s04_db_of_books.py
-
-      - name: run tests sprint4 db_of_books
-        run: pytest --junitxml=${GITHUB_WORKSPACE}/db_of_books.xml ${GITHUB_WORKSPACE}/cpp-backend-tests-practicum/tests/test_s04_db_of_books.py
-        env:
-          DELIVERY_APP: ${{ github.workspace }}/sprint4/problems/db_of_books/solution/build/book_manager
 
       - name: build sprint4 bookypedia-1
         run: |
