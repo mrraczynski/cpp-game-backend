@@ -14,7 +14,7 @@ public:
 
     void Save(const domain::Author& author) override;
 
-    std::unordered_map<std::string, std::string> ShowAuthors() override;
+    std::vector<std::pair<std::string, std::string>> ShowAuthors() override;
 
 private:
     pqxx::work& work_;

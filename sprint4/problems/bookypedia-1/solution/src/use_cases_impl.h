@@ -14,7 +14,7 @@ public:
 
     void AddAuthor(const std::string& name) override;
 
-    std::unordered_map<std::string, std::string> ShowAuthors() override;
+    std::vector<std::pair<std::string, std::string>> ShowAuthors() override;
 
     void AddBook(const std::string& title, const std::string& author_id, int publication_year) override;
 

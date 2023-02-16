@@ -36,7 +36,7 @@ private:
 class AuthorRepository {
 public:
     virtual void Save(const Author& author) = 0;
-    virtual std::unordered_map<std::string, std::string> ShowAuthors() = 0;
+    virtual std::vector<std::pair<std::string, std::string>> ShowAuthors() = 0;
 
 protected:
     ~AuthorRepository() = default;

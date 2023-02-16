@@ -10,7 +10,7 @@ void UseCasesImpl::AddAuthor(const std::string& name) {
     authors_.Save({AuthorId::New(), name});
 }
 
-std::unordered_map<std::string, std::string> UseCasesImpl::ShowAuthors() {
+std::vector<std::pair<std::string, std::string>> UseCasesImpl::ShowAuthors() {
     return authors_.ShowAuthors();
 }
 
