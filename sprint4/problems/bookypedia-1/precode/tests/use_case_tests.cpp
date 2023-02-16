@@ -13,8 +13,8 @@ struct MockAuthorRepository : domain::AuthorRepository {
         saved_authors.emplace_back(author);
     }
 
-    std::unordered_map<std::string, std::string> ShowAuthors() override {
-        return std::unordered_map<std::string, std::string>();
+    std::vector<std::pair<std::string, std::string>> ShowAuthors() override {
+        return std::vector<std::pair<std::string, std::string>>();
     }
 };
 
