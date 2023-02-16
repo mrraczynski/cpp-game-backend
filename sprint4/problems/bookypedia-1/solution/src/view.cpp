@@ -47,7 +47,7 @@ bool View::AddAuthor(std::istream& cmd_input) {
         boost::algorithm::trim(name);
         use_cases_.AddAuthor(std::move(name));
     } catch (const std::exception&) {
-        output_ << "Failed to add author"sv << std::endl;
+        output_ << "Failed to add author"sv;
     }
     return true;
 }
