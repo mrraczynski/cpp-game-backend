@@ -47,7 +47,7 @@ bool View::AddAuthor(std::istream& cmd_input) {
         boost::algorithm::trim(name);
         use_cases_.AddAuthor(std::move(name));
     } catch (const std::exception&) {
-        output_ << "Failed to add author"sv;
+        output_ << "Failed to add author"sv << std::endl;
     }
     return true;
 }
@@ -58,7 +58,7 @@ bool View::ShowAuthors(std::istream& cmd_input)
         auto authors = use_cases_.ShowAuthors();
         for (int i = 1; auto& author : authors)
         {
-            output_ << i << ". "sv << author.second << std::endl;
+            output_ << i << " "sv << author.second << std::endl;
             ++i;
         }
     }
