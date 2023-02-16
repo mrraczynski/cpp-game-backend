@@ -167,7 +167,7 @@ bool View::ShowAuthors(std::istream& cmd_input)
         auto authors = use_cases_.ShowAuthors();
         for (int i = 1; auto& author : authors)
         {
-            output_ << i << ". "sv << author.second << std::endl;
+            output_ << i << " "sv << author.second << std::endl;
             ++i;
         }
     }

@@ -21,7 +21,7 @@ std::unordered_map<std::string, std::string> AuthorRepositoryImpl::ShowAuthors()
 SELECT id,
        name
   FROM authors
- ORDER BY name ASC;
+ ORDER BY name DESC;
 )"_zv;
     auto result = work_.exec_params(query_text);
     std::unordered_map<std::string, std::string> authors;
