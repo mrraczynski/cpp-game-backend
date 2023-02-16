@@ -13,7 +13,7 @@ constexpr const char DB_URL_ENV_NAME[]{"BOOKYPEDIA_DB_URL"};
 bookypedia::AppConfig GetConfigFromEnv() {
     bookypedia::AppConfig config;
     if (/*const auto* url = std::getenv(DB_URL_ENV_NAME)*/ true) {
-        const auto url = std::string("postgres://postgres:PupkiN@localhost:5432/postgres");
+        const auto url = std::string(DB_URL_ENV_NAME);
         config.db_url = url;
     } else {
         throw std::runtime_error(DB_URL_ENV_NAME + " environment variable not found"s);
