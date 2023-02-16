@@ -83,7 +83,7 @@ bool View::AddBook(std::istream& cmd_input) {
 
         for (int i = 1; auto & author : authors)
         {
-            output_ << i << ". "sv << author.second << std::endl;
+            output_ << i << " "sv << author.second << std::endl;
             authors_vec.push_back(author.first);
             ++i;
         }
@@ -114,7 +114,7 @@ bool View::ShowBooks(std::istream& cmd_input)
         auto authors = use_cases_.ShowBooks();
         for (int i = 1; auto& author : authors)
         {
-            output_ << i << ". "sv << author.first << ", " << author.second << std::endl;
+            output_ << i << " "sv << author.first << ", " << author.second << std::endl;
             ++i;
         }
     }
@@ -134,7 +134,7 @@ bool View::ShowAuthorBooks(std::istream& cmd_input)
 
         for (int i = 1; auto & author : authors)
         {
-            output_ << i << ". "sv << author.second << std::endl;
+            output_ << i << " "sv << author.second << std::endl;
             authors_vec.push_back(author.first);
             ++i;
         }
@@ -153,7 +153,7 @@ bool View::ShowAuthorBooks(std::istream& cmd_input)
             auto books = use_cases_.ShowAuthorBooks(std::move(authors_vec[num - 1]));
             for (int i = 1; auto & book : books)
             {
-                output_ << i << ". "sv << book.first << ", " << book.second << std::endl;
+                output_ << i << " "sv << book.first << ", " << book.second << std::endl;
                 ++i;
             }
         }
