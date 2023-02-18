@@ -20,8 +20,6 @@ View::View(menu::Menu& menu, app::UseCases& use_cases, std::istream& input, std:
     , output_{output} {
     menu_.AddAction(  //
         "AddAuthor"s, "name"s, "Adds author"s, std::bind(&View::AddAuthor, this, ph::_1)
-        // либо
-        // [this](auto& cmd_input) { return AddAuthor(cmd_input); }
     );
 
     menu_.AddAction(  //
@@ -90,7 +88,7 @@ bool View::AddBookWithAuthorFromList(std::string& title, int year)
 
     for (int i = 1; auto & author : authors)
     {
-        output_ << i << ". "sv << author.second << std::endl;
+        output_ << i << " "sv << author.second << std::endl;
         authors_vec.push_back(author.first);
         ++i;
     }
@@ -154,7 +152,14 @@ bool View::AddAuthor(std::istream& cmd_input) {
         std::string name;
         std::getline(cmd_input, name);
         boost::algorithm::trim(name);
-        use_cases_.AddAuthor(std::move(name));
+        if (name.empty())
+        {
+            output_ << "Failed to add author"sv << std::endl;
+        }
+        else
+        {
+            use_cases_.AddAuthor(std::move(name));
+        }
     } catch (const std::exception&) {
         output_ << "Failed to add author"sv << std::endl;
     }
@@ -167,7 +172,7 @@ bool View::ShowAuthors(std::istream& cmd_input)
         auto authors = use_cases_.ShowAuthors();
         for (int i = 1; auto& author : authors)
         {
-            output_ << i << ". "sv << author.second << std::endl;
+            output_ << i << " "sv << author.second << std::endl;
             ++i;
         }
     }
@@ -192,7 +197,7 @@ bool View::DeleteAuthor(std::istream& cmd_input)
 
             for (int i = 1; auto & author : authors)
             {
-                output_ << i << ". "sv << author.second << std::endl;
+                output_ << i << " "sv << author.second << std::endl;
                 authors_vec.push_back(author.first);
                 ++i;
             }
@@ -249,7 +254,7 @@ bool View::UpdateAuthor(std::istream& cmd_input)
 
             for (int i = 1; auto & author : authors)
             {
-                output_ << i << ". "sv << author.second << std::endl;
+                output_ << i << " "sv << author.second << std::endl;
                 authors_vec.push_back(author.first);
                 ++i;
             }
@@ -307,6 +312,11 @@ bool View::AddBook(std::istream& cmd_input) {
         std::string title;
         std::getline(cmd_input, title);
         boost::algorithm::trim(title);
+        if (title.empty())
+        {
+            output_ << "Failed to add book"sv << std::endl;
+            return true;
+        }
 
         output_ << "Enter author name or empty line to select from list:"sv << std::endl;
         std::string author_name;
@@ -354,7 +364,7 @@ bool View::ShowAuthorBooks(std::istream& cmd_input)
 
         for (int i = 1; auto & author : authors)
         {
-            output_ << i << ". "sv << author.second << std::endl;
+            output_ << i << " "sv << author.second << std::endl;
             authors_vec.push_back(author.first);
             ++i;
         }
@@ -373,7 +383,7 @@ bool View::ShowAuthorBooks(std::istream& cmd_input)
             auto books = use_cases_.ShowAuthorBooks(std::move(authors_vec[num - 1]));
             for (int i = 1; auto & book : books)
             {
-                output_ << i << ". "sv << book.first << ", " << book.second << std::endl;
+                output_ << i << " "sv << book.first << ", " << book.second << std::endl;
                 ++i;
             }
         }

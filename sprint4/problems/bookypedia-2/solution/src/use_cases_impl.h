@@ -14,7 +14,7 @@ public:
 
     std::string AddAuthor(const std::string& name) override;
 
-    std::unordered_map<std::string, std::string> ShowAuthors() override;
+    std::vector<std::pair<std::string, std::string>> ShowAuthors() override;
 
     std::string GetAuthorIdByName(const std::string& name) override;
 

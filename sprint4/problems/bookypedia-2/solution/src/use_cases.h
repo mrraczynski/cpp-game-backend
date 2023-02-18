@@ -9,7 +9,7 @@ namespace app {
 class UseCases {
 public:
     virtual std::string AddAuthor(const std::string& name) = 0;
-    virtual std::unordered_map<std::string, std::string> ShowAuthors() = 0;
+    virtual std::vector<std::pair<std::string, std::string>> ShowAuthors() = 0;
     virtual std::string GetAuthorIdByName(const std::string& name) = 0;
     virtual void DeleteAuthor(const std::string& author_id) = 0;
     virtual void UpdateAuthor(const std::string& author_id, const std::string& name) = 0;
