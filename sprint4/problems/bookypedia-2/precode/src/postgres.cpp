@@ -16,7 +16,7 @@ ON CONFLICT (id) DO UPDATE SET name=$2;
     work_.commit();
 }
 
-std::unordered_map<std::string, std::string> AuthorRepositoryImpl::ShowAuthors() {
+std::vector<std::pair<std::string, std::string>> AuthorRepositoryImpl::ShowAuthors() {
     auto query_text = R"(
 SELECT id,
        name
@@ -24,10 +24,10 @@ SELECT id,
  ORDER BY name DESC;
 )"_zv;
     auto result = work_.exec_params(query_text);
-    std::unordered_map<std::string, std::string> authors;
+    std::vector<std::pair<std::string, std::string>> authors;
     for (const auto& row : result) 
     {
-        authors[row[0].c_str()] = row[1].c_str();
+        authors.push_back({ row[0].c_str() , row[1].c_str() });
     }
     work_.commit();
     return authors;
