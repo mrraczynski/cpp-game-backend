@@ -1,6 +1,9 @@
 #pragma once
 #include <memory>
 #include <pqxx/pqxx>
+#include <condition_variable>
+#include <mutex>
+
 
 namespace conn {
 
