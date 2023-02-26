@@ -21,7 +21,7 @@ std::vector<std::pair<std::string, std::string>> AuthorRepositoryImpl::ShowAutho
 SELECT id,
        name
   FROM authors
- ORDER BY name DESC;
+ ORDER BY name ASC;
 )"_zv;
     auto result = work_.exec_params(query_text);
     std::vector<std::pair<std::string, std::string>> authors;
